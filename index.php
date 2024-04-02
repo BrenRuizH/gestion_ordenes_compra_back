@@ -1,7 +1,7 @@
 <?php
 include("conexion.php");
 
-$query = $connect->query("SELECT * FROM usuarios");
+$query = $mysql->query("SELECT * FROM usuarios");
 
 $usuarios = array();
 while ($row = $query->fetch_assoc()) {
