@@ -1,6 +1,6 @@
 <?php
-require_once '../conexion.php';
-include '../config.php';
+require_once 'conexion.php';
+include 'config.php';
 
 $query = $mysql->query("SELECT * FROM usuarios");
 
