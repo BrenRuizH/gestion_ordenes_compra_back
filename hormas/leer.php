@@ -4,7 +4,7 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
     require_once '../conexion.php';
     include '../config.php';
 
-    $query="SELECT hormas.id, hormas.nombre, clientes.codigo AS cliente 
+    $query="SELECT hormas.id, hormas.nombre, hormas.matriz, hormas.cambrillon, hormas.materiales, hormas.observaciones, clientes.codigo AS cliente 
             FROM hormas 
             INNER JOIN clientes ON hormas.cliente_id = clientes.id";
     $resultado=$mysql->query($query);
@@ -18,7 +18,11 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
             $itemDetails=array(
                 "id" => $id,
                 "nombre" => $nombre,
-                "cliente" => $cliente
+                "cliente" => $cliente,
+                "matriz" => $matriz,
+                "cambrillon" => $cambrillon,
+                "materiales" => $materiales,
+                "observaciones" => $observaciones
             );
             array_push($itemRecords["items"], $itemDetails);
         }
