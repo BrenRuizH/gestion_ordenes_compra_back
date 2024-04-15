@@ -6,8 +6,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
     $nombre = $_POST['nombre'];
     $cliente_id = $_POST['cliente_id'];
+    $cambrillon = $_POS['cambrillon'];
+    $matriz = $_POS['matriz'];
+    $materiales = $_POS['materiales'];
+    $observaciones = $_POS['observaciones'];
 
-    $query = "CALL AgregarHorma('$nombre', '$cliente_id');";
+    $query = "CALL AgregarHorma('$nombre', '$cliente_id', '$cambrillon', '$matriz', '$materiales', '$observaciones');";
 
     $resultSet = $mysql->query($query);
     if(!$resultSet){
