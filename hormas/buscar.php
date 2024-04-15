@@ -6,7 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     
     $id = $_GET['id'];
 
-    $query = "SELECT h.id, h.nombre, h.matriz, h.cambrillon, h.materiales, h.observaciones c.codigo AS cliente FROM hormas h
+    $query = "SELECT h.id, h.nombre, h.matriz, h.cambrillon, h.materiales, h.observaciones, c.codigo AS cliente FROM hormas h
               INNER JOIN clientes c ON h.cliente_id = c.id 
               WHERE c.id = $id;";
 
