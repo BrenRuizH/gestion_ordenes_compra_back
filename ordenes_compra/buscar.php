@@ -7,7 +7,7 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
 
     $id = $_GET['id'];
     
-    $query="SELECT oc.folio, c.codigo, oc.orden_compra_c, oc.fecha_orden, oc.fecha_entrega, oc.total_pares 
+    $query="SELECT oc.id as orden_id, oc.folio, c.codigo, oc.orden_compra_c, oc.fecha_orden, oc.fecha_entrega, oc.total_pares 
             FROM ordenes_compra oc 
             INNER JOIN clientes c ON oc.cliente_id = c.id
             WHERE c.id = $id";
@@ -20,7 +20,7 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
             extract($item);
             
             $itemDetails=array(
-                "id" => $id,
+                "id" => $orden_id,
                 "folio" => $folio,
                 "codigo" => $codigo,
                 "orden_compra_c" => $orden_compra_c,
