@@ -18,6 +18,10 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
             $itemDetails=array(
                 "id" => $id,
                 "nombre" => $nombre,
+                "matriz" => $matriz,
+                "cambrillon" => $cambrillon,
+                "materiales" => $materiales,
+                "observaciones" => $observaciones,
                 "cliente_id" => $cliente_id
             );
             array_push($itemRecords["items"], $itemDetails);
