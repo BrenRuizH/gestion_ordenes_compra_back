@@ -6,13 +6,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
     $codigo = $_POST['codigo'];
     $razonSocial = $_POST['razonSocial'];
-    $rfc = $_POST['rfc'];
+    $rfc = isset($_POST['rfc']) ? "'".$_POST['rfc']."'" : 'NULL';
     $telefono = isset($_POST['telefono']) ? "'".$_POST['telefono']."'" : 'NULL';
     $pagosCon = isset($_POST['pagosCon']) ? "'".$_POST['pagosCon']."'" : 'NULL';
     $pedidosA = isset($_POST['pedidosA']) ? "'".$_POST['pedidosA']."'" : 'NULL';
     $recepcionDePedidos = isset($_POST['recepcionDePedidos']) ? "'".$_POST['recepcionDePedidos']."'" : 'NULL';
 
-    $query = "CALL AgregarCliente('$codigo', '$razonSocial', '$rfc', $telefono, $pagosCon, $pedidosA, $recepcionDePedidos);";
+    $query = "CALL AgregarCliente('$codigo', '$razonSocial', $rfc, $telefono, $pagosCon, $pedidosA, $recepcionDePedidos);";
 
     $resultSet = $mysql->query($query);
     if(!$resultSet){
