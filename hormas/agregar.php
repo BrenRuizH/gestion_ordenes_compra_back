@@ -6,10 +6,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
     $nombre = $_POST['nombre'];
     $cliente_id = $_POST['cliente_id'];
-    $matriz = $_POS['matriz'];
-    $cambrillon = $_POS['cambrillon'];
-    $materiales = $_POS['materiales'];
-    $observaciones = $_POS['observaciones'];
+    $matriz = isset($_POST['matriz']) ? "'".$_POST['matriz']."'" : 'NULL';
+    $cambrillon = isset($_POST['cambrillon']) ? "'".$_POST['cambrillon']."'" : 'NULL';
+    $materiales = isset($_POST['materiales'] ? "'".$_POST['materiales']."'" : 'NULL';
+    $observaciones = isset($_POST['observaciones'] ? "'".$_POST['observaciones']."'" : 'NULL';
 
     $query = "CALL AgregarHorma('$nombre', '$cliente_id', $matriz, '$cambrillon', '$materiales', '$observaciones');";
 
