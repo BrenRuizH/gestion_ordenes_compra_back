@@ -7,8 +7,8 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
 
     $id = $_GET['id'];
 
-$query="SELECT o.id, o.fecha_orden, o.fecha_entrega, o.cliente_id, o.folio, o.orden_compra_c, o.horma_id, o.cambrillon_id, o.observaciones, o.matriz, o.total_pares,
-d.material_id, d.punto, d.cantidad
+$query="SELECT o.id, o.fecha_orden, o.fecha_entrega, o.cliente_id, o.folio, o.orden_compra_c,
+o.horma_id, o.total_pares, d.punto, d.cantidad
 FROM ordenes_compra o
 JOIN detalles_orden_compra d
 ON o.id = d.orden_compra_id
@@ -30,11 +30,7 @@ WHERE o.id = $id";
                 "cliente_id" => $cliente_id,
                 "horma_id" => $horma_id,
                 "orden_compra_c" => $orden_compra_c,
-                "observaciones" => $observaciones,
-                "cambrillon_id" => $cambrillon_id,
                 "total_pares" => $total_pares,
-                "matriz" => $matriz,
-                "material_id" => $material_id,
                 "cantidad" => $cantidad,
                 "punto" => $punto
             );
