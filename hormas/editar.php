@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $materiales = $_POST['materiales'];
     $observaciones = $_POST['observaciones'];
 
-    $query = "CALL EditarHorma($id, '$nombre', $cliente_id, $matriz, $cambrillon, $materiales, $observaciones);";
+    $query = "CALL EditarHorma($id, '$nombre', $cliente_id, '$matriz', '$cambrillon', '$materiales', '$observaciones');";
 
     $resultSet = $mysql->query($query);
     if(!$resultSet){
