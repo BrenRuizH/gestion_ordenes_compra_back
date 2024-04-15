@@ -7,10 +7,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id = $_POST['id'];
     $nombre = $_POST['nombre'];
     $cliente_id = $_POST['cliente_id'];
-    $matriz = $_POT['matriz'];
-    $cambrillon = $_POT['cambrillon'];
-    $materiales = $_POT['materiales'];
-    $observaciones = $_POT['observaciones'];
+    $matriz = $_POST['matriz'];
+    $cambrillon = $_POST['cambrillon'];
+    $materiales = $_POST['materiales'];
+    $observaciones = $_POST['observaciones'];
 
     $query = "CALL EditarHorma($id, '$nombre', $cliente_id, $matriz, '$cambrillon', '$materiales', '$observaciones');";
 
