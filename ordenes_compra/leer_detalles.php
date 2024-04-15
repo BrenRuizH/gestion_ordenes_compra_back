@@ -10,17 +10,15 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
     $itemRecords=array();
     $itemRecords["items1"]=array();
     $itemRecords["items2"]=array();
-    $itemRecords["items3"]=array();
 
     $query1="SELECT oc.id, oc.fecha_orden, oc.fecha_entrega, 
                 oc.cliente_id, c.codigo AS cliente, oc.folio, 
-                oc.orden_compra_c, oc.horma_id, h.nombre AS horma,
-                oc.cambrillon_id, cam.nombre AS cambrillon, oc.observaciones, 
-                oc.matriz, oc.total_pares
+                oc.orden_compra_c, oc.horma_id, h.nombre AS horma, h.matriz AS matriz,
+                h.cambrillon AS cambrillon, h.materiales AS materiales, 
+                h.observaciones AS observaciones, oc.total_pares
              FROM ordenes_compra oc 
              INNER JOIN clientes c ON oc.cliente_id = c.id
              INNER JOIN hormas h ON oc.horma_id = h.id
-             LEFT JOIN cambrillones cam ON oc.cambrillon_id = cam.id
              WHERE oc.id = $orden_id;";
 
     $resultado1=$mysql->query($query1);
@@ -38,10 +36,10 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
                 "fecha_entrega" => $fecha_entrega,
                 "horma_id" => $horma_id,
                 "horma" => $horma,
-                "cambrillon_id" => $cambrillon_id,
-                "cambrillon" => $cambrillon,
-                "observaciones" => $observaciones, 
                 "matriz" => $matriz,
+                "cambrillon" => $cambrillon,
+                "materiales" => $materiales,
+                "observaciones" => $observaciones, 
                 "total_pares" => $total_pares,
             );
             array_push($itemRecords["items1"], $itemDetails1);
@@ -63,24 +61,6 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
                 "cantidad" => $cantidad
             );
             array_push($itemRecords["items2"], $itemDetails2);
-        }
-    }
-
-    $query3="SELECT m.id, m.nombre AS material 
-             FROM materiales_orden_compra moc
-             INNER JOIN materiales m ON moc.material_id = m.id
-             WHERE moc.orden_compra_id = $orden_id;";
-
-    $resultado3=$mysql->query($query3);
-
-    if($resultado3->num_rows > 0) {
-        while ($item3 = $resultado3->fetch_assoc()) {
-            extract($item3);
-            $itemDetails3=array(
-                "id" => $id,
-                "material" => $material,
-            );
-            array_push($itemRecords["items3"], $itemDetails3);
         }
     }
 
