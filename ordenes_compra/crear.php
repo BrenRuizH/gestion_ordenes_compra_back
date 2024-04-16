@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $orden_compra_c = $_POST['orden_compra_c'];
     $horma_id = $_POST['horma_id'];
     $total_pares = $_POST['total_pares'];
-    $punto = explode(',', $_POST['punto']);
+    $punto = array_map('floatval', explode(',', $_POST['punto']));
     $cantidad = array_map('intval', explode(',', $_POST['cantidad']));
 
     try {
@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         for ($i = 0; $i < count($punto); $i++) {
             if ($punto[$i] && $cantidad[$i]) {
-                $stmt->bind_param("isi", $orden_compra_id, $punto[$i], $cantidad[$i]);
+                $stmt->bind_param("idi", $orden_compra_id, $punto[$i], $cantidad[$i]);
                 if (!$stmt->execute()) {
                     throw new Exception("Error al insertar detalle de orden de compra: " . $stmt->error);
                 }
