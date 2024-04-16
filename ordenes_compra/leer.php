@@ -1,43 +1,45 @@
 <?php
 
-require_once '../conexion.php';
-include '../config.php';
+if($_SERVER["REQUEST_METHOD"]=="GET")
+{
+    require_once '../conexion.php';
+    include '../config.php';
 
-if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    if (isset($_GET['cliente_id'])) {
-        $cliente_id = $_GET['cliente_id'];
+    $query="SELECT oc.id, oc.folio, c.codigo, oc.orden_compra_c, oc.fecha_orden, oc.fecha_entrega, oc.total_pares 
+            FROM ordenes_compra oc 
+            INNER JOIN clientes c ON oc.cliente_id = c.id
+            ORDER BY oc.fecha_orden DESC;";
 
-        $query = "SELECT orden_compra_c FROM ordenes_compra WHERE cliente_id = ? ORDER BY fecha_orden DESC LIMIT 1";
-        $stmt = $mysql->prepare($query);
-        $stmt->bind_param("i", $cliente_id);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $orden = $result->fetch_assoc();
+    $resultado=$mysql->query($query);
+    if($resultado->num_rows > 0)
+    {
+        $itemRecords=array();
+        $itemRecords["items"]=array();
+        while ($item = $resultado->fetch_assoc())
+        {
+            extract($item);
 
-        if ($orden) {
-            $orden_compra_c = $orden['orden_compra_c'];
+            $itemDetails=array(
+                "id" => $id,
+                "folio" => $folio,
+                "codigo" => $codigo,
+                "orden_compra_c" => $orden_compra_c,
+                "fecha_orden" => $fecha_orden,
+                "fecha_entrega" => $fecha_entrega,
+                "total_pares" => $total_pares
+            );
+            array_push($itemRecords["items"], $itemDetails);
+ }
+        $queryFolioMax="SELECT MAX(folio) as maxFolio FROM ordenes_compra";
+        $resultadoFolioMax=$mysql->query($queryFolioMax);
+        $folioMax = $resultadoFolioMax->fetch_assoc();
+        $itemRecords["maxFolio"] = $folioMax['maxFolio'];
 
-            $prefix = substr($orden_compra_c, 0, 3);
-            $number = intval(substr($orden_compra_c, 3));
-
-            $number++;
-
-            $new_orden_compra_c = $prefix . $number;
-        } else {
-            $query = "SELECT acronimo FROM clientes WHERE id = ?";
-            $stmt = $mysql->prepare($query);
-            $stmt->bind_param("i", $cliente_id);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            $cliente = $result->fetch_assoc();
-            $acronimo_cliente = $cliente['acronimo'];
-
-            $new_orden_compra_c = $acronimo_cliente . '1';
-        }
-
-        echo json_encode(["new_orden_compra_c" => $new_orden_compra_c]);
-    } else {
-        echo json_encode(["error" => "No se proporcionó el cliente_id"]);
-    }
+        http_response_code(200);
+        echo json_encode($itemRecords);
+ } else {
+        http_response_code(404);
+        echo json_encode(array("message" => "No se encontraron órdenes de compra."));
+  }
 }
 ?>
