@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             $orden_compra_c = $orden['orden_compra_c'];
 
             $prefix = $orden['acronimo'];
-            $number = intval(substr($orden_compra_c, 3));
+            $number = intval(substr($orden_compra_c, strlen($prefix)));
 
             $number++;
 
