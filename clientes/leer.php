@@ -4,7 +4,7 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
     require_once '../conexion.php';
     include '../config.php';
 
-    $query="SELECT * FROM clientes";
+    $query="SELECT * FROM clientes ORDER BY codigo ASC;";
 
     $resultado=$mysql->query($query);
 
