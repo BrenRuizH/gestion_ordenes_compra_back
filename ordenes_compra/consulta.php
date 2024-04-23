@@ -36,7 +36,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             $cliente = $result->fetch_assoc();
             $acronimo_cliente = $cliente['acronimo'];
 
-            $new_orden_compra_c = $acronimo_cliente . '1';
+            $query = "SELECT COUNT(*) as count FROM ordenes_compra WHERE cliente_id = ?";
+            $stmt = $mysql->prepare($query);
+            $stmt->bind_param("i", $cliente_id);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $count = $result->fetch_assoc()['count'];
+
+            $new_orden_compra_c = $acronimo_cliente . ($count + 1);
         }
 
         echo json_encode(["new_orden_compra_c" => $new_orden_compra_c]);
