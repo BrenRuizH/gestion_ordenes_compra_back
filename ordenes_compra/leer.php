@@ -8,7 +8,7 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
     $query="SELECT oc.id, oc.folio, c.codigo, oc.orden_compra_c, oc.fecha_orden, oc.fecha_entrega, oc.total_pares 
             FROM ordenes_compra oc 
             INNER JOIN clientes c ON oc.cliente_id = c.id
-            ORDER BY oc.fecha_orden DESC;";
+            ORDER BY oc.fecha_orden DESC, oc.folio DESC;";
 
     $resultado=$mysql->query($query);
     if($resultado->num_rows > 0)
