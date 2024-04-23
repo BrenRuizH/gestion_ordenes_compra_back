@@ -18,15 +18,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         $result = $stmt->get_result();
         $orden = $result->fetch_assoc();
 
+        $query = "SELECT COUNT(*) as count FROM ordenes_compra WHERE cliente_id = ?";
+        $stmt = $mysql->prepare($query);
+        $stmt->bind_param("i", $cliente_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $count = $result->fetch_assoc()['count'];
+
         if ($orden) {
             $orden_compra_c = $orden['orden_compra_c'];
 
             $prefix = $orden['acronimo'];
             $number = intval(substr($orden_compra_c, strlen($prefix)));
 
-            $number++;
-
-            $new_orden_compra_c = $prefix . $number;
+            $new_orden_compra_c = $prefix . ($count + 1);
         } else {
             $query = "SELECT acronimo FROM clientes WHERE id = ?";
             $stmt = $mysql->prepare($query);
@@ -35,13 +40,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             $result = $stmt->get_result();
             $cliente = $result->fetch_assoc();
             $acronimo_cliente = $cliente['acronimo'];
-
-            $query = "SELECT COUNT(*) as count FROM ordenes_compra WHERE cliente_id = ?";
-            $stmt = $mysql->prepare($query);
-            $stmt->bind_param("i", $cliente_id);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            $count = $result->fetch_assoc()['count'];
 
             $new_orden_compra_c = $acronimo_cliente . ($count + 1);
         }
