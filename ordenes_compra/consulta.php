@@ -7,11 +7,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     if (isset($_GET['cliente_id'])) {
         $cliente_id = $_GET['cliente_id'];
 
-        $query = "SELECT c.acronimo, orden_compra_c 
-                  FROM ordenes_compra 
-                  INNER JOIN clientes c
-                  WHERE cliente_id = ? 
-                  ORDER BY fecha_orden DESC LIMIT 1";
+        $query = "SELECT c.acronimo, o.orden_compra_c 
+                  FROM ordenes_compra o
+                  INNER JOIN clientes c ON o.cliente_id = c.id
+                  WHERE o.cliente_id = ? 
+                  ORDER BY o.fecha_orden DESC LIMIT 1;";
         $stmt = $mysql->prepare($query);
         $stmt->bind_param("i", $cliente_id);
         $stmt->execute();
