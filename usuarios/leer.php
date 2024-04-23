@@ -6,7 +6,8 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
 
     $query="SELECT usuarios.id, usuarios.nombre, usuarios.contrasenia, roles.nombre AS rol 
             FROM usuarios 
-            INNER JOIN roles ON usuarios.rol_id = roles.id";
+            INNER JOIN roles ON usuarios.rol_id = roles.id
+            ORDER BY usuarios.nombre;";
     $resultado=$mysql->query($query);
     if($resultado->num_rows > 0)
     {
