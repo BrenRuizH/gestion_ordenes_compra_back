@@ -30,7 +30,7 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
             );
             array_push($itemRecords["items"], $itemDetails);
  }
-        $queryFolioMax="SELECT MAX(folio) as maxFolio FROM ordenes_compra";
+        $queryFolioMax="SELECT MAX(CAST(folio AS UNSIGNED)) as maxFolio FROM ordenes_compra;";
         $resultadoFolioMax=$mysql->query($queryFolioMax);
         $folioMax = $resultadoFolioMax->fetch_assoc();
         $itemRecords["maxFolio"] = $folioMax['maxFolio'];
