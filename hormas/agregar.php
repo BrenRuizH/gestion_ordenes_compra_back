@@ -10,8 +10,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $cambrillon = isset($_POST['cambrillon']) ? "'".$_POST['cambrillon']."'" : 'NULL';
     $materiales = isset($_POST['materiales']) ? "'".$_POST['materiales']."'" : 'NULL';
     $observaciones = isset($_POST['observaciones']) ? "'".$_POST['observaciones']."'" : 'NULL';
+    $precio = $_POST['precio'];
 
-    $query = "CALL AgregarHorma('$nombre', '$cliente_id', $matriz, $cambrillon, $materiales, $observaciones);";
+    $query = "CALL AgregarHorma('$nombre', '$cliente_id', $matriz, $cambrillon, $materiales, $observaciones, $precio);";
 
     $resultSet = $mysql->query($query);
     if(!$resultSet){
