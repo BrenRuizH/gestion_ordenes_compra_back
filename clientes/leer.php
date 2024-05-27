@@ -21,7 +21,7 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
                 "telefono" => $telefono,
                 "pagosCon" => $pagosCon,
                 "pedidosA" => $pedidosA,
-                "recepcionDePedidos" => $recepcionDePedidos
+                "direccion" => $direccion
             );
             array_push($itemRecords["items"], $itemDetails);
         }
