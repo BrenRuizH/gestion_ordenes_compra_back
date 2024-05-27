@@ -10,9 +10,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $telefono = isset($_POST['telefono']) ? "'".$_POST['telefono']."'" : 'NULL';
     $pagosCon = isset($_POST['pagosCon']) ? "'".$_POST['pagosCon']."'" : 'NULL';
     $pedidosA = isset($_POST['pedidosA']) ? "'".$_POST['pedidosA']."'" : 'NULL';
-    $recepcionDePedidos = isset($_POST['recepcionDePedidos']) ? "'".$_POST['recepcionDePedidos']."'" : 'NULL';
+    $direccion = isset($_POST['direccion']) ? "'".$_POST['direccion']."'" : 'NULL';
 
-    $query = "CALL AgregarCliente('$codigo', '$razonSocial', $rfc, $telefono, $pagosCon, $pedidosA, $recepcionDePedidos);";
+    $query = "CALL AgregarCliente('$codigo', '$razonSocial', $rfc, $telefono, $pagosCon, $pedidosA, $direccion);";
 
     $resultSet = $mysql->query($query);
     if(!$resultSet){
