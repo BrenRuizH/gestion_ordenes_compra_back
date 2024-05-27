@@ -5,12 +5,13 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
     require_once '../conexion.php';
     include '../config.php';
 
-    $id = $_GET['id'];
+    $texto = $_GET['texto'];
     
     $query="SELECT oc.id as orden_id, oc.folio, c.codigo, oc.orden_compra_c, oc.fecha_orden, oc.fecha_entrega, oc.total_pares 
             FROM ordenes_compra oc 
             INNER JOIN clientes c ON oc.cliente_id = c.id
-            WHERE c.id = $id";
+            WHERE c.codigo LIKE '%$texto%' OR oc.orden_compra_c LIKE '%$texto%'";
+    
 
     $resultado=$mysql->query($query);
     if($resultado->num_rows > 0) {
