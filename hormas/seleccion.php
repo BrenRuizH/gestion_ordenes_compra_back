@@ -22,7 +22,8 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
                 "matriz" => $matriz,
                 "cambrillon" => $cambrillon,
                 "materiales" => $materiales,
-                "observaciones" => $observaciones
+                "observaciones" => $observaciones,
+                "precio" => $precio
             );
             array_push($itemRecords["items"], $itemDetails);
         }
