@@ -11,7 +11,8 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
     $query="SELECT oc.id as orden_id, oc.folio, c.codigo, oc.orden_compra_c, oc.fecha_orden, oc.fecha_entrega, oc.total_pares, oc.facturaNo  
             FROM ordenes_compra oc 
             INNER JOIN clientes c ON oc.cliente_id = c.id
-            WHERE oc.fecha_orden BETWEEN '$fecha_inicio' AND '$fecha_fin'";
+            WHERE oc.fecha_orden BETWEEN '$fecha_inicio' AND '$fecha_fin'
+            ORDER BY oc.fecha_orden DESC, oc.folio DESC;";
     
 
     $resultado=$mysql->query($query);
