@@ -7,7 +7,7 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
 
     $texto = $_GET['texto'];
     
-    $query="SELECT oc.id as orden_id, oc.folio, c.codigo, oc.orden_compra_c, oc.fecha_orden, oc.fecha_entrega, oc.total_pares 
+    $query="SELECT oc.id as orden_id, oc.folio, c.codigo, oc.orden_compra_c, oc.fecha_orden, oc.fecha_entrega, oc.total_pares, oc.facturaNo  
             FROM ordenes_compra oc 
             INNER JOIN clientes c ON oc.cliente_id = c.id
             WHERE c.codigo LIKE '%$texto%' OR oc.orden_compra_c LIKE '%$texto%'";
