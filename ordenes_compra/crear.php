@@ -14,12 +14,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $total_pares = $_POST['total_pares'];
     $punto = array_map('floatval', explode(',', $_POST['punto']));
     $cantidad = array_map('intval', explode(',', $_POST['cantidad']));
+    $status = 'EN PRODUCCIÓN';
 
     try {
         $mysql->begin_transaction();
 
         $stmt = $mysql->prepare("CALL CrearOrdenCompra(?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("ssissii", $fecha_orden, $fecha_entrega, $cliente_id, $folio, $orden_compra_c, $horma_id, $total_pares);
+        $stmt->bind_param("ssissii", $fecha_orden, $fecha_entrega, $cliente_id, $folio, $orden_compra_c, $horma_id, $total_pares $status);
         if (!$stmt->execute()) {
             throw new Exception("Error al insertar orden de compra: " . $stmt->error);
         }
