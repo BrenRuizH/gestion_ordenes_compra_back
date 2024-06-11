@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     try {
       $mysql->begin_transaction();
 
-      $stmt = $mysql->prepare("UPDATE ordenes_compra SET status = '$status' WHERE id = $id;");
+      $stmt = $mysql->prepare("UPDATE ordenes_compra SET status = ? WHERE id = ?;");
       $stmt->bind_param("si", $status, $id);
       if (!$stmt->execute()) {
         throw new Exception("Error al actualizar el status de la orden: ".$stmt->error);
