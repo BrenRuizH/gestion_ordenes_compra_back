@@ -11,10 +11,10 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
     $itemRecords["items1"]=array();
     $itemRecords["items2"]=array();
 
-    $query1="SELECT oc.id, oc.fecha_orden, oc.fecha_entrega, 
-                oc.cliente_id, c.codigo AS cliente, oc.folio, 
+    $query1="SELECT oc.id, oc.fecha_orden, oc.fecha_entrega, oc.remision,
+                oc.cliente_id, c.razonSocial, c.telefono, c.direccion c.codigo AS cliente, oc.folio, 
                 oc.orden_compra_c, oc.horma_id, h.nombre AS horma, h.matriz AS matriz,
-                h.cambrillon AS cambrillon, h.materiales AS materiales, 
+                h.cambrillon AS cambrillon, h.precio, h.materiales AS materiales, 
                 h.observaciones AS observaciones, oc.total_pares
              FROM ordenes_compra oc 
              INNER JOIN clientes c ON oc.cliente_id = c.id
@@ -29,8 +29,12 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
             $itemDetails1=array(
                 "id" => $id,
                 "folio" => $folio,
+                "remision" => $remision,
                 "cliente_id" => $cliente_id,
                 "cliente" => $cliente,
+                "razonSocial" => $razonSocial,
+                "telefono" => $telefono,
+                "direccion" => $direccion,
                 "orden_compra_c" => $orden_compra_c,
                 "fecha_orden" => $fecha_orden,
                 "fecha_entrega" => $fecha_entrega,
@@ -39,7 +43,8 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
                 "matriz" => $matriz,
                 "cambrillon" => $cambrillon,
                 "materiales" => $materiales,
-                "observaciones" => $observaciones, 
+                "observaciones" => $observaciones,
+                "precio" => $precio,
                 "total_pares" => $total_pares,
             );
             array_push($itemRecords["items1"], $itemDetails1);
