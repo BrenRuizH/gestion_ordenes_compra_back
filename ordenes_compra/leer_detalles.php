@@ -12,7 +12,7 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
     $itemRecords["items2"]=array();
 
     $query1="SELECT oc.id, oc.fecha_orden, oc.fecha_entrega, oc.remision,
-                oc.cliente_id, c.razonSocial, c.telefono, c.direccion c.codigo AS cliente, oc.folio, 
+                oc.cliente_id, c.razonSocial, c.telefono, c.direccion, c.codigo AS cliente, oc.folio, 
                 oc.orden_compra_c, oc.horma_id, h.nombre AS horma, h.matriz AS matriz,
                 h.cambrillon AS cambrillon, h.precio, h.materiales AS materiales, 
                 h.observaciones AS observaciones, oc.total_pares
