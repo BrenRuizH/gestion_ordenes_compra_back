@@ -41,4 +41,5 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
     } else {
         http_response_code(404);
         echo json_encode(array("message" => "No se encontraron órdenes de compra."));
+    }
 }
