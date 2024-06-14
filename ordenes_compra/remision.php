@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($orden && $orden['remision']) {
             // La orden ya tiene un número de remisión
-            echo json_encode(["status"=>"error","message" => "La orden ya cuenta con un número de remisión"]);
+            echo json_encode(["status"=>"success","message" => "La orden ya cuenta con un número de remisión"]);
         } else {
             // Obtener el último número de remisión y calcular el siguiente
             $stmtUltimaRemision = $mysql->prepare("SELECT MAX(remision) as ultimoNumero FROM ordenes_compra;");
