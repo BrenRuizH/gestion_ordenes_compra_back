@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->close();
 
         $stmt = $mysql->prepare("INSERT INTO remision_detalles(remision_id, folio) VALUES (?, ?)");
-        $stmt->bind_param("is", $orden_compra_id, $folio);
+        $stmt->bind_param("is", $remision_id, $folio);
         if (!$stmt->execute()) {
             throw new Exception("Error al insertar detalle de remision: " . $stmt->error);
         }
