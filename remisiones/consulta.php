@@ -6,11 +6,13 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
 
     $cliente_id = $_GET['cliente_id'];
 
-    $query="SELECT oc.folio, oc.total_pares, h.precio*oc.total_pares AS precio
-      FROM ordenes_compra oc
-      INNER JOIN hormas h ON oc.horma_id = h.id
-      WHERE oc.cliente_id = $cliente_id
-      ORDER BY oc.fecha_orden DESC, oc.folio DESC;";
+    $query="SELECT oc.folio, oc.total_pares, h.precio * oc.total_pares AS precio
+        FROM ordenes_compra oc
+        INNER JOIN hormas h ON oc.horma_id = h.id
+        LEFT JOIN remision_detalles rd ON oc.folio = rd.folio
+        WHERE oc.cliente_id = $cliente_id
+        AND rd.folio IS NULL
+        ORDER BY oc.fecha_orden DESC, oc.folio DESC;";
   
     $resultado=$mysql->query($query);
     if($resultado->num_rows > 0)
