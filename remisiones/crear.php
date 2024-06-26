@@ -22,11 +22,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Obtiene el ID de la remisión insertada
         $remision_id = $stmt->insert_id;
 
-        // Inserta en la tabla de detalles de remisión
-        $stmt = $mysql->prepare("INSERT INTO remision_detalles (remision_id, folio) VALUES (?, ?)");
-        $stmt->bind_param("is", $remision_id, $folio);
-        if (!$stmt->execute()) {
-            throw new Exception("Error al insertar detalle de remisión: " . $stmt->error);
+        // Inserta los folios en la tabla de detalles de remisión
+        $foliosArray = explode(',', $folio);
+        foreach ($foliosArray as $fol) {
+            $stmt = $mysql->prepare("INSERT INTO remision_detalles (remision_id, folio) VALUES (?, ?)");
+            $stmt->bind_param("is", $remision_id, trim($fol));
+            if (!$stmt->execute()) {
+                throw new Exception("Error al insertar detalle de remisión: " . $stmt->error);
+            }
         }
 
         // Realiza el commit solo si todo fue exitoso
