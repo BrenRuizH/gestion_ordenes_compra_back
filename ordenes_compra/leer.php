@@ -5,10 +5,11 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
     require_once '../conexion.php';
     include '../config.php';
 
-    $query="SELECT oc.id, oc.folio, c.codigo, oc.orden_compra_c, oc.fecha_orden, oc.fecha_entrega, oc.total_pares, oc.facturaNo, oc.status
-            FROM ordenes_compra oc 
-            INNER JOIN clientes c ON oc.cliente_id = c.id
-            ORDER BY oc.fecha_orden DESC, oc.folio DESC;";
+    $query="SELECT oc.id, oc.folio, c.codigo, oc.orden_compra_c, oc.fecha_orden, oc.fecha_entrega, oc.total_pares, h.precio*oc.total_pares AS precio, oc.facturaNo, oc.status
+	    FROM ordenes_compra oc 
+	    INNER JOIN clientes c ON oc.cliente_id = c.id
+        INNER JOIN hormas h ON oc.horma_id = h.id
+	    ORDER BY oc.fecha_orden DESC, oc.folio DESC;";
 
     $resultado=$mysql->query($query);
     if($resultado->num_rows > 0)
@@ -27,6 +28,7 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
                 "fecha_orden" => $fecha_orden,
                 "fecha_entrega" => $fecha_entrega,
                 "total_pares" => $total_pares,
+                "precio" => $precio,
                 "facturaNo" => $facturaNo,
                 "status" => $status
             );
