@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     $query = "SELECT r.id, c.codigo AS cliente, r.total_pares, r.precio_final
         FROM remisiones r
 	INNER JOIN clientes c ON r.cliente_id = c.id
-        WHERE r.id = $id
+        WHERE c.id = $id
 	ORDER BY r.id DESC;";
 
     $resultado=$mysql->query($query);
