@@ -14,7 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $itemRecords["detalles_orden_compra"] = array();
 
     $query = "SELECT c.razonSocial, c.direccion, c.telefono, c.id AS cliente,
-                     r.id AS remision, rd.folio,
+                     r.id AS remision,
                      oc.id AS orden_compra, oc.total_pares,
                      h.id AS horma, h.nombre, h.precio,
                      doc.punto, doc.cantidad
@@ -40,8 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             );
 
             $remisionDetails = array(
-                "id" => $remision,
-                "folio" => $folio
+                "id" => $remision
             );
 
             $ordenCompraDetails = array(
@@ -60,23 +59,24 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                 "cantidad" => $cantidad
             );
 
+            // Añadir datos a las secciones correspondientes si no existen ya
             if (empty($itemRecords["cliente"])) {
-                array_push($itemRecords["cliente"], $clienteDetails);
+                $itemRecords["cliente"][] = $clienteDetails;
             }
 
-            if (empty($itemRecords["remision"])) {
-                array_push($itemRecords["remision"], $remisionDetails);
+            if (!in_array($remisionDetails, $itemRecords["remision"])) {
+                $itemRecords["remision"][] = $remisionDetails;
             }
 
-            if (empty($itemRecords["orden_compra"])) {
-                array_push($itemRecords["orden_compra"], $ordenCompraDetails);
+            if (!in_array($ordenCompraDetails, $itemRecords["orden_compra"])) {
+                $itemRecords["orden_compra"][] = $ordenCompraDetails;
             }
 
-            if (empty($itemRecords["horma"])) {
-                array_push($itemRecords["horma"], $hormaDetails);
+            if (!in_array($hormaDetails, $itemRecords["horma"])) {
+                $itemRecords["horma"][] = $hormaDetails;
             }
 
-            array_push($itemRecords["detalles_orden_compra"], $detallesOrdenCompraDetails);
+            $itemRecords["detalles_orden_compra"][] = $detallesOrdenCompraDetails;
         }
 
         http_response_code(200);
