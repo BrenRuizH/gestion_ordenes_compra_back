@@ -14,7 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $itemRecords["detalles_orden_compra"] = array();
 
     $query = "SELECT c.razonSocial, c.direccion, c.telefono, c.id AS cliente,
-                     r.id AS remision,
+                     r.id AS remision, rd.folio,
                      oc.id AS orden_compra, oc.total_pares,
                      h.id AS horma, h.nombre, h.precio,
                      doc.punto, doc.cantidad
@@ -40,7 +40,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             );
 
             $remisionDetails = array(
-                "id" => $remision
+                "id" => $remision,
+                "folio" => $folio
             );
 
             $ordenCompraDetails = array(
