@@ -7,7 +7,7 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
 
     $texto = $_GET['texto'];
     
-    $query="SELECT oc.id as orden_id, oc.folio, c.codigo, oc.orden_compra_c, oc.fecha_orden, oc.fecha_entrega, oc.total_pares, oc.facturaNo  
+    $query="SELECT oc.id as orden_id, oc.folio, c.codigo, oc.orden_compra_c, oc.fecha_orden, oc.fecha_entrega, oc.total_pares, oc.facturaNo, oc.status  
             FROM ordenes_compra oc 
             INNER JOIN clientes c ON oc.cliente_id = c.id
             WHERE c.codigo LIKE '%$texto%' OR oc.orden_compra_c LIKE '%$texto%'";
@@ -27,7 +27,8 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
                 "orden_compra_c" => $orden_compra_c,
                 "fecha_orden" => $fecha_orden,
                 "fecha_entrega" => $fecha_entrega,
-                "total_pares" => $total_pares
+                "total_pares" => $total_pares,
+                "status" => $status
             );
             array_push($itemRecords["items"], $itemDetails);
         }
