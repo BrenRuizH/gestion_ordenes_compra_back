@@ -1,17 +1,10 @@
-<?php
-
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
     require_once '../conexion.php';
     include '../config.php';
 
     $remision_id = $_GET['remision_id'];
 
-    $itemRecords = array();
-    $itemRecords["cliente"] = array();
-    $itemRecords["remision"] = array();
-    $itemRecords["orden_compra"] = array();
-    $itemRecords["horma"] = array();
-    $itemRecords["detalles_orden_compra"] = array();
+    $response = array();
 
     $query = "SELECT c.razonSocial, c.direccion, c.telefono, c.id AS cliente,
                      r.id AS remision,
@@ -29,62 +22,55 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $resultado = $mysql->query($query);
 
     if ($resultado->num_rows > 0) {
+        $response['cliente'] = [];
+        $response['remision'] = [];
+        $response['orden_compra'] = [];
+
         while ($row = $resultado->fetch_assoc()) {
-            extract($row);
-            
-            $clienteDetails = array(
-                "id" => $cliente,
-                "razonSocial" => $razonSocial,
-                "direccion" => $direccion,
-                "telefono" => $telefono
-            );
-
-            $remisionDetails = array(
-                "id" => $remision
-            );
-
-            $ordenCompraDetails = array(
-                "id" => $orden_compra,
-                "total_pares" => $total_pares
-            );
-
-            $hormaDetails = array(
-                "id" => $horma,
-                "nombre" => $nombre,
-                "precio" => $precio
-            );
-
-            $detallesOrdenCompraDetails = array(
-                "punto" => $punto,
-                "cantidad" => $cantidad
-            );
-
-            // Añadir datos a las secciones correspondientes si no existen ya
-            if (empty($itemRecords["cliente"])) {
-                $itemRecords["cliente"][] = $clienteDetails;
+            // Datos del cliente
+            if (empty($response['cliente'])) {
+                $response['cliente'][] = [
+                    'id' => $row['cliente'],
+                    'razonSocial' => $row['razonSocial'],
+                    'direccion' => $row['direccion'],
+                    'telefono' => $row['telefono']
+                ];
             }
 
-            if (!in_array($remisionDetails, $itemRecords["remision"])) {
-                $itemRecords["remision"][] = $remisionDetails;
+            // Datos de la remisión
+            if (empty($response['remision'])) {
+                $response['remision'][] = [
+                    'id' => $row['remision']
+                ];
             }
 
-            if (!in_array($ordenCompraDetails, $itemRecords["orden_compra"])) {
-                $itemRecords["orden_compra"][] = $ordenCompraDetails;
+            // Datos de las órdenes de compra
+            $orden_compra_id = $row['orden_compra'];
+            if (!isset($response['orden_compra'][$orden_compra_id])) {
+                $response['orden_compra'][$orden_compra_id] = [
+                    'id' => $orden_compra_id,
+                    'total_pares' => $row['total_pares'],
+                    'horma' => [
+                        'id' => $row['horma'],
+                        'nombre' => $row['nombre'],
+                        'precio' => $row['precio']
+                    ],
+                    'detalles' => []
+                ];
             }
 
-            if (!in_array($hormaDetails, $itemRecords["horma"])) {
-                $itemRecords["horma"][] = $hormaDetails;
-            }
-
-            $itemRecords["detalles_orden_compra"][] = $detallesOrdenCompraDetails;
+            // Datos de los detalles de la orden de compra
+            $response['orden_compra'][$orden_compra_id]['detalles'][] = [
+                'punto' => $row['punto'],
+                'cantidad' => $row['cantidad']
+            ];
         }
 
-        http_response_code(200);
-        echo json_encode($itemRecords);
+        $response['orden_compra'] = array_values($response['orden_compra']); // Para resetear los índices del array
+
+        echo json_encode($response);
     } else {
         http_response_code(404);
         echo json_encode(array("message" => "No se encontraron datos."));
     }
 }
-
-?>
