@@ -1,3 +1,4 @@
+<?php
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
     require_once '../conexion.php';
     include '../config.php';
@@ -74,3 +75,4 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         echo json_encode(array("message" => "No se encontraron datos."));
     }
 }
+?>
