@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($cliente_id == 36) {
             foreach ($elementosAgregados as $elemento) {
-                $horma_id = $elemento['horma'];
+                $horma_id = $elemento['horma_id'];
                 foreach ($elemento['puntosYcantidades'] as $puntoCantidad) {
                     $punto = $puntoCantidad['punto'];
                     $cantidad = $puntoCantidad['cantidad'];
