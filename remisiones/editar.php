@@ -27,6 +27,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (!$stmt->execute()) {
                 throw new Exception("Error al insertar detalle de remisión: " . $stmt->error);
             }
+            
+            $stmt= $mysql ->prepare ("UPDATE ordenes_compra SET status = 'REMISIONADO' WHERE folio = ?");
+            $stmt->bind_param("s",trim($fol));
+            if (!$stmt->execute()) {
+                throw new Exception("Error al actualizar el status: " . $stmt->error);
+            }
         }
         
         $mysql->commit();
