@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 foreach ($elemento['puntosYcantidades'] as $puntoCantidad) {
                     $punto = $puntoCantidad['punto'];
                     $cantidad = $puntoCantidad['cantidad'];
-                    $stmt = $mysql->prepare("INSERT INTO remision_hormas (remision_id, horma_id, punto, cantidad) VALUES (?, ?, ?, ?)");
+                    $stmt = $mysql->prepare("INSERT INTO remision_puntos_cantidades (remision_id, horma_id, punto, cantidad) VALUES (?, ?, ?, ?)");
                     $stmt->bind_param("iiid", $remision_id, $horma_id, $punto, $cantidad);
                     if (!$stmt->execute()) {
                         throw new Exception("Error al insertar detalle de horma: " . $stmt->error);
