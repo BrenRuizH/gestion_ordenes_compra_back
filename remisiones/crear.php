@@ -11,7 +11,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $elementosAgregados = isset($_POST['elementosAgregados']) ? json_decode($_POST['elementosAgregados'], true) : [];
 
-    if ($cliente_id != 36) {
     try {
         $mysql->begin_transaction();
 
@@ -36,7 +35,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 throw new Exception("Error al actualizar el status: " . $stmt->error);
             }
         }
-    }
 
         if ($cliente_id == 36) {
             foreach ($elementosAgregados as $elemento) {
