@@ -9,6 +9,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $precio_final = $_POST['precio_final'];
     $folio = $_POST['folio'];
 
+    $elementosAgregados = isset($_POST['elementosAgregados']) ? json_decode($_POST['elementosAgregados'], true) : [];
+
+    if ($cliente_id != 36) {
     try {
         $mysql->begin_transaction();
 
@@ -31,6 +34,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->bind_param("s",trim($fol));
             if (!$stmt->execute()) {
                 throw new Exception("Error al actualizar el status: " . $stmt->error);
+            }
+        }
+    }
+
+        if ($cliente_id == 36) {
+            foreach ($elementosAgregados as $elemento) {
+                $horma_id = $elemento['horma'];
+                foreach ($elemento['puntosYcantidades'] as $puntoCantidad) {
+                    $punto = $puntoCantidad['punto'];
+                    $cantidad = $puntoCantidad['cantidad'];
+                    $stmt = $mysql->prepare("INSERT INTO remision_hormas (remision_id, horma_id, punto, cantidad) VALUES (?, ?, ?, ?)");
+                    $stmt->bind_param("iiid", $remision_id, $horma_id, $punto, $cantidad);
+                    if (!$stmt->execute()) {
+                        throw new Exception("Error al insertar detalle de horma: " . $stmt->error);
+                    }
+                }
             }
         }
 
