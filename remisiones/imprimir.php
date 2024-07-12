@@ -20,6 +20,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
               INNER JOIN detalles_orden_compra doc ON doc.orden_compra_id = oc.id
               INNER JOIN hormas h ON h.id = oc.horma_id
               WHERE r.id = $remision_id;";
+              
+    error_log("Ejecutando consulta general: $query");
 
     $resultado = $mysql->query($query);
 
@@ -29,6 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         $response['orden_compra'] = [];
 
         while ($row = $resultado->fetch_assoc()) {
+            error_log("Fila obtenida: " . json_encode($row));
             // Datos del cliente (solo se agrega una vez)
             if (empty($response['cliente'])) {
                 $response['cliente'][] = [
@@ -52,11 +55,14 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                              FROM remision_puntos_cantidades rpc
                              INNER JOIN hormas h ON h.id = rpc.horma_id
                              WHERE rpc.remision_id = $remision_id;";
+                             
+                error_log("Ejecutando subconsulta: $subquery");
 
                 $subresultado = $mysql->query($subquery);
 
                 if ($subresultado->num_rows > 0) {
                     while ($subrow = $subresultado->fetch_assoc()) {
+                        error_log("Subfila obtenida: " . json_encode($subrow));
                         $horma_id = $subrow['horma_id'];
                         if (!isset($response['orden_compra'][$horma_id])) {
                             $response['orden_compra'][$horma_id] = [
@@ -79,6 +85,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                             'cantidad' => $subrow['cantidad']
                         ];
                     }
+                } else {
+                    error_log("No se encontraron datos en remision_puntos_cantidades para remision_id = $remision_id");
                 }
             } else {
                 $orden_compra_id = $row['orden_compra'];
@@ -119,8 +127,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
         echo json_encode($response);
     } else {
+        error_log("No se encontraron datos en la consulta general para remision_id = $remision_id");
         http_response_code(404);
         echo json_encode(array("message" => "No se encontraron datos."));
     }
 }
-?>
