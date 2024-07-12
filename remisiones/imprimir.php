@@ -7,7 +7,6 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
     $response = array();
 
-    // Consultar el cliente_id de la remisión
     $query_cliente_id = "SELECT cliente_id FROM remisiones WHERE id = ?";
     $stmt_cliente_id = $mysql->prepare($query_cliente_id);
     $stmt_cliente_id->bind_param("i", $remision_id);
@@ -18,9 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         $cliente_id_row = $resultado_cliente_id->fetch_assoc();
         $cliente_id = $cliente_id_row['cliente_id'];
 
-        // Verificar si el cliente_id es 36
         if ($cliente_id == 36) {
-            // Primer servicio para cliente_id 36
             $query = "
                 SELECT c.razonSocial, c.direccion, c.telefono, c.id AS cliente,
                        r.id AS remision, r.extra, r.descripcion, r.oc,
@@ -43,7 +40,6 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                 $response['orden_compra'] = [];
 
                 while ($row = $resultado->fetch_assoc()) {
-                    // Añadir datos del cliente si aún no están añadidos
                     if (empty($response['cliente'])) {
                         $response['cliente'][] = [
                             'id' => $row['cliente'],
@@ -53,7 +49,6 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                         ];
                     }
 
-                    // Añadir datos de la remisión si aún no están añadidos
                     if (empty($response['remision'])) {
                         $response['remision'][] = [
                             'id' => $row['remision'],
@@ -63,7 +58,6 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                         ];
                     }
 
-                    // Crear o actualizar detalle de orden de compra por cada horma_id
                     $horma_id = $row['horma_id'];
                     if (!isset($response['orden_compra'][$horma_id])) {
                         $response['orden_compra'][$horma_id] = [
@@ -78,18 +72,15 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                         ];
                     }
 
-                    // Añadir detalle de orden de compra a la horma correspondiente
                     $cantidad = $row['cantidad'];
                     $response['orden_compra'][$horma_id]['detalles'][] = [
                         'punto' => $row['punto'],
                         'cantidad' => $cantidad
                     ];
 
-                    // Sumar cantidad al total_pares de la horma correspondiente
                     $response['orden_compra'][$horma_id]['total_pares'] += $cantidad;
                 }
 
-                // Convertir arrays a valores para asegurar la estructura correcta en JSON
                 $response['cliente'] = array_values($response['cliente']);
                 $response['remision'] = array_values($response['remision']);
                 $response['orden_compra'] = array_values($response['orden_compra']);
@@ -100,7 +91,6 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                 echo json_encode(array("message" => "No se encontraron datos."));
             }
         } else {
-            // Segundo servicio para todos los demás clientes
             $query = "
                 SELECT c.razonSocial, c.direccion, c.telefono, c.id AS cliente,
                        r.id AS remision, r.extra, r.descripcion,
@@ -126,7 +116,6 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                 $response['orden_compra'] = [];
 
                 while ($row = $resultado->fetch_assoc()) {
-                    // Datos del cliente (solo se agrega una vez)
                     if (empty($response['cliente'])) {
                         $response['cliente'][] = [
                             'id' => $row['cliente'],
@@ -136,7 +125,6 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                         ];
                     }
 
-                    // Datos de la remisión (solo se agrega una vez)
                     if (empty($response['remision'])) {
                         $response['remision'][] = [
                             'id' => $row['remision'],
@@ -147,7 +135,6 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
                     $orden_compra_id = $row['orden_compra'];
                     if (!isset($response['orden_compra'][$orden_compra_id])) {
-                        // Datos de la orden de compra
                         $response['orden_compra'][$orden_compra_id] = [
                             'id' => $orden_compra_id,
                             'total_pares' => $row['total_pares'],
@@ -160,7 +147,6 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                         ];
                     }
 
-                    // Detalles de la orden de compra (se agrupan únicamente una vez)
                     $detalle_existente = false;
                     foreach ($response['orden_compra'][$orden_compra_id]['detalles'] as &$detalle) {
                         if ($detalle['punto'] == $row['punto'] && $detalle['cantidad'] == $row['cantidad']) {
@@ -177,7 +163,6 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                     }
                 }
 
-                // Reindexar el array de orden_compra para resetear los índices
                 $response['orden_compra'] = array_values($response['orden_compra']);
 
                 echo json_encode($response);
@@ -192,4 +177,3 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     }
 }
 ?>
-
