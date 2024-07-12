@@ -64,7 +64,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                         'nombre' => $row['nombre_horma'],
                         'precio' => $row['precio_horma']
                     ],
-                    'detalles' => []
+                    'detalles' => [],
+                    'total_pares' => $row['total_pares']
                 ];
             }
 
@@ -73,9 +74,6 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                 'punto' => $row['punto'],
                 'cantidad' => $row['cantidad']
             ];
-            
-            // Actualizar el total de pares para esta horma
-            $response['orden_compra'][$horma_id]['total_pares'] = $row['total_pares'];
         }
 
         $response['cliente'] = array_values($response['cliente']);
