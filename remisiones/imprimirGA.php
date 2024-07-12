@@ -61,13 +61,13 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             if (!isset($response['orden_compra'][$horma_id])) {
                 $response['orden_compra'][$horma_id] = [
                     'id' => $horma_id,
-                    'total_pares' => $row['total_pares']
+                    'total_pares' => $row['total_pares'],
                     'horma' => [
                         'id' => $row['horma_id'],
                         'nombre' => $row['nombre_horma'],
                         'precio' => $row['precio_horma']
                     ],
-                    'detalles' => [],
+                    'detalles' => []
                 ];
             }
 
