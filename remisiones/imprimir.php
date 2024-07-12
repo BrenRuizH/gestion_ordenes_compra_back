@@ -77,7 +77,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                 $response['remision'][] = [
                     'id' => $row['remision'],
                     'extra' => $row['extra'],
-                    'descripcion' => $row['descripcion´]
+                    'descripcion' => $row['descripcion']
                 ];
             }
 
