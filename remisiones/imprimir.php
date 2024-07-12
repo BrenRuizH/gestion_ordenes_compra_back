@@ -46,61 +46,76 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                 ];
             }
 
-            $orden_compra_id = $row['orden_compra'];
-            if (!isset($response['orden_compra'][$orden_compra_id])) {
-                // Datos de la orden de compra
-                $response['orden_compra'][$orden_compra_id] = [
-                    'id' => $orden_compra_id,
-                    'total_pares' => $row['total_pares'],
-                    'horma' => [
-                        'id' => $row['horma_id'],
-                        'nombre' => $row['nombre_horma'],
-                        'precio' => $row['precio_horma']
-                    ],
-                    'detalles' => []
-                ];
-            }
+            // Si el cliente_id es 36, obtener datos de remision_puntos_cantidades
+            if ($row['cliente'] == 36) {
+                $subquery = "SELECT rpc.horma_id, rpc.punto, rpc.cantidad, h.nombre AS nombre_horma, h.precio AS precio_horma
+                             FROM remision_puntos_cantidades rpc
+                             INNER JOIN hormas h ON h.id = rpc.horma_id
+                             WHERE rpc.remision_id = $remision_id;";
 
-            // Detalles de la orden de compra (se agrupan únicamente una vez)
-            $detalle_existente = false;
-            foreach ($response['orden_compra'][$orden_compra_id]['detalles'] as &$detalle) {
-                if ($detalle['punto'] == $row['punto'] && $detalle['cantidad'] == $row['cantidad']) {
-                    $detalle_existente = true;
-                    break;
+                $subresultado = $mysql->query($subquery);
+
+                if ($subresultado->num_rows > 0) {
+                    while ($subrow = $subresultado->fetch_assoc()) {
+                        $horma_id = $subrow['horma_id'];
+                        if (!isset($response['orden_compra'][$horma_id])) {
+                            $response['orden_compra'][$horma_id] = [
+                                'horma' => [
+                                    'id' => $subrow['horma_id'],
+                                    'nombre' => $subrow['nombre_horma'],
+                                    'precio' => $subrow['precio_horma']
+                                ],
+                                'total_pares' => 0,
+                                'detalles' => []
+                            ];
+                        }
+
+                        // Sumar cantidad para total_pares
+                        $response['orden_compra'][$horma_id]['total_pares'] += $subrow['cantidad'];
+
+                        // Agregar detalles de puntos y cantidades
+                        $response['orden_compra'][$horma_id]['detalles'][] = [
+                            'punto' => $subrow['punto'],
+                            'cantidad' => $subrow['cantidad']
+                        ];
+                    }
                 }
-            }
-            
-            if (!$detalle_existente) {
-                $response['orden_compra'][$orden_compra_id]['detalles'][] = [
-                    'punto' => $row['punto'],
-                    'cantidad' => $row['cantidad']
-                ];
+            } else {
+                $orden_compra_id = $row['orden_compra'];
+                if (!isset($response['orden_compra'][$orden_compra_id])) {
+                    // Datos de la orden de compra
+                    $response['orden_compra'][$orden_compra_id] = [
+                        'id' => $orden_compra_id,
+                        'total_pares' => $row['total_pares'],
+                        'horma' => [
+                            'id' => $row['horma_id'],
+                            'nombre' => $row['nombre_horma'],
+                            'precio' => $row['precio_horma']
+                        ],
+                        'detalles' => []
+                    ];
+                }
+
+                // Detalles de la orden de compra (se agrupan únicamente una vez)
+                $detalle_existente = false;
+                foreach ($response['orden_compra'][$orden_compra_id]['detalles'] as &$detalle) {
+                    if ($detalle['punto'] == $row['punto'] && $detalle['cantidad'] == $row['cantidad']) {
+                        $detalle_existente = true;
+                        break;
+                    }
+                }
+                
+                if (!$detalle_existente) {
+                    $response['orden_compra'][$orden_compra_id]['detalles'][] = [
+                        'punto' => $row['punto'],
+                        'cantidad' => $row['cantidad']
+                    ];
+                }
             }
         }
 
         // Reindexar el array de orden_compra para resetear los índices
         $response['orden_compra'] = array_values($response['orden_compra']);
-
-        // Si el cliente_id es 36, realizar la lógica específica
-        if (!empty($response['cliente']) && $response['cliente'][0]['id'] == 36) {
-            // Lógica específica para el cliente_id 36
-            foreach ($response['orden_compra'] as &$orden) {
-                // Modificar aquí lo que sea necesario para este cliente específico
-                // Por ejemplo, podrías agrupar los detalles de las órdenes de compra
-                $orden['detalles'] = array_reduce($orden['detalles'], function($carry, $item) {
-                    $key = $item['punto'];
-                    if (!isset($carry[$key])) {
-                        $carry[$key] = $item;
-                    } else {
-                        $carry[$key]['cantidad'] += $item['cantidad'];
-                    }
-                    return $carry;
-                }, []);
-                
-                // Convertir el resultado a una lista de detalles
-                $orden['detalles'] = array_values($orden['detalles']);
-            }
-        }
 
         echo json_encode($response);
     } else {
