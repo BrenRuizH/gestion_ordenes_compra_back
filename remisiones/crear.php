@@ -7,8 +7,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $cliente_id = $_POST['cliente_id'];
     $total_pares = $_POST['total_pares'];
     $precio_final = $_POST['precio_final'];
-    $extra = $_POST['extra'];
-    $descripcion = $_POST['descripcion'];
+    $extra = isset($_POST['extra']) ? "'".$_POST['extra']."'" : 'NULL';
+    $descripcion = isset($_POST['descripcion']) ? "'".$_POST['descripcion']."'" : 'NULL';
     $folio = $_POST['folio'];
 
     $elementosAgregados = isset($_POST['elementosAgregados']) ? json_decode($_POST['elementosAgregados'], true) : [];
