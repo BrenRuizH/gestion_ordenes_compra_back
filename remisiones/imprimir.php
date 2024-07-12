@@ -9,7 +9,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
     $query_cliente_36 = "
         SELECT c.razonSocial, c.direccion, c.telefono, c.id AS cliente,
-               r.id AS remision, r.extra, r.descripcion, r.oc
+               r.id AS remision, r.extra, r.descripcion, r.oc,
                h.id AS horma_id, h.nombre AS nombre_horma, h.precio AS precio_horma,
                rpc.punto, rpc.cantidad, 
                total_suma.total_pares
