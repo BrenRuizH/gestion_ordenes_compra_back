@@ -8,7 +8,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $response = array();
 
     $query = "SELECT c.razonSocial, c.direccion, c.telefono, c.id AS cliente,
-                     r.id AS remision,
+                     r.id AS remision, r.extra, r.descripcion,
                      oc.id AS orden_compra, oc.total_pares,
                      h.id AS horma_id, h.nombre AS nombre_horma, h.precio AS precio_horma,
                      doc.punto, doc.cantidad
@@ -41,7 +41,9 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             // Datos de la remisión (solo se agrega una vez)
             if (empty($response['remision'])) {
                 $response['remision'][] = [
-                    'id' => $row['remision']
+                    'id' => $row['remision'],
+                    'extra' => $row['extra'],
+                    'descripcion' => $row['descripcion'],
                 ];
             }
 
