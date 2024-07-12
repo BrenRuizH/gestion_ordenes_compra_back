@@ -20,12 +20,15 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         INNER JOIN (
           SELECT remision_id, SUM(cantidad) AS total_pares
           FROM remision_puntos_cantidades
-          WHERE remision_id = $remision_id
+          WHERE remision_id = ?
           GROUP BY remision_id
         ) AS total_suma ON r.id = total_suma.remision_id
-        WHERE r.id = $remision_id;";
+        WHERE r.id = ?;";
     
-    $resultado = $mysql->query($query);
+    $stmt = $mysql->prepare($query);
+    $stmt->bind_param("ii", $remision_id, $remision_id);
+    $stmt->execute();
+    $resultado = $stmt->get_result();
 
     if ($resultado->num_rows > 0) {
         $response['cliente'] = [];
@@ -51,11 +54,11 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                 ];
             }
 
-            $orden_compra_id = $row['remision'];
-            if (!isset($response['orden_compra'][$orden_compra_id])) {
-                $response['orden_compra'][$orden_compra_id] = [
-                    'id' => $orden_compra_id,
-                    'total_pares' => $row['total_pares'],
+            // Crear o actualizar detalle de orden de compra por cada horma
+            $horma_id = $row['horma_id'];
+            if (!isset($response['orden_compra'][$horma_id])) {
+                $response['orden_compra'][$horma_id] = [
+                    'id' => $horma_id,
                     'horma' => [
                         'id' => $row['horma_id'],
                         'nombre' => $row['nombre_horma'],
@@ -65,22 +68,18 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                 ];
             }
 
-            $detalle_existente = false;
-            foreach ($response['orden_compra'][$orden_compra_id]['detalles'] as &$detalle) {
-                if ($detalle['punto'] == $row['punto'] && $detalle['cantidad'] == $row['cantidad']) {
-                    $detalle_existente = true;
-                    break;
-                }
-            }
+            // Agregar detalle de orden de compra
+            $response['orden_compra'][$horma_id]['detalles'][] = [
+                'punto' => $row['punto'],
+                'cantidad' => $row['cantidad']
+            ];
             
-            if (!$detalle_existente) {
-                $response['orden_compra'][$orden_compra_id]['detalles'][] = [
-                    'punto' => $row['punto'],
-                    'cantidad' => $row['cantidad']
-                ];
-            }
+            // Actualizar el total de pares para esta horma
+            $response['orden_compra'][$horma_id]['total_pares'] = $row['total_pares'];
         }
 
+        $response['cliente'] = array_values($response['cliente']);
+        $response['remision'] = array_values($response['remision']);
         $response['orden_compra'] = array_values($response['orden_compra']);
 
         echo json_encode($response);
