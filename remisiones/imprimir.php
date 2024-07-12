@@ -7,7 +7,6 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
     $response = array();
 
-    // Consulta general
     $query = "SELECT c.razonSocial, c.direccion, c.telefono, c.id AS cliente,
                      r.id AS remision,
                      oc.id AS orden_compra, oc.total_pares,
@@ -20,8 +19,6 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
               INNER JOIN detalles_orden_compra doc ON doc.orden_compra_id = oc.id
               INNER JOIN hormas h ON h.id = oc.horma_id
               WHERE r.id = $remision_id;";
-              
-    error_log("Ejecutando consulta general: $query");
 
     $resultado = $mysql->query($query);
 
@@ -31,8 +28,6 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         $response['orden_compra'] = [];
 
         while ($row = $resultado->fetch_assoc()) {
-            error_log("Fila obtenida: " . json_encode($row));
-            // Datos del cliente (solo se agrega una vez)
             if (empty($response['cliente'])) {
                 $response['cliente'][] = [
                     'id' => $row['cliente'],
@@ -42,93 +37,48 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                 ];
             }
 
-            // Datos de la remisión (solo se agrega una vez)
             if (empty($response['remision'])) {
                 $response['remision'][] = [
                     'id' => $row['remision']
                 ];
             }
 
-            // Si el cliente_id es 36, obtener datos de remision_puntos_cantidades
-            if ($row['cliente'] == 36) {
-                $subquery = "SELECT rpc.horma_id, rpc.punto, rpc.cantidad, h.nombre AS nombre_horma, h.precio AS precio_horma
-                             FROM remision_puntos_cantidades rpc
-                             INNER JOIN hormas h ON h.id = rpc.horma_id
-                             WHERE rpc.remision_id = $remision_id;";
-                             
-                error_log("Ejecutando subconsulta: $subquery");
+            $orden_compra_id = $row['orden_compra'];
+            if (!isset($response['orden_compra'][$orden_compra_id])) {
+                $response['orden_compra'][$orden_compra_id] = [
+                    'id' => $orden_compra_id,
+                    'total_pares' => $row['total_pares'],
+                    'horma' => [
+                        'id' => $row['horma_id'],
+                        'nombre' => $row['nombre_horma'],
+                        'precio' => $row['precio_horma']
+                    ],
+                    'detalles' => []
+                ];
+            }
 
-                $subresultado = $mysql->query($subquery);
-
-                if ($subresultado->num_rows > 0) {
-                    while ($subrow = $subresultado->fetch_assoc()) {
-                        error_log("Subfila obtenida: " . json_encode($subrow));
-                        $horma_id = $subrow['horma_id'];
-                        if (!isset($response['orden_compra'][$horma_id])) {
-                            $response['orden_compra'][$horma_id] = [
-                                'horma' => [
-                                    'id' => $subrow['horma_id'],
-                                    'nombre' => $subrow['nombre_horma'],
-                                    'precio' => $subrow['precio_horma']
-                                ],
-                                'total_pares' => 0,
-                                'detalles' => []
-                            ];
-                        }
-
-                        // Sumar cantidad para total_pares
-                        $response['orden_compra'][$horma_id]['total_pares'] += $subrow['cantidad'];
-
-                        // Agregar detalles de puntos y cantidades
-                        $response['orden_compra'][$horma_id]['detalles'][] = [
-                            'punto' => $subrow['punto'],
-                            'cantidad' => $subrow['cantidad']
-                        ];
-                    }
-                } else {
-                    error_log("No se encontraron datos en remision_puntos_cantidades para remision_id = $remision_id");
+            $detalle_existente = false;
+            foreach ($response['orden_compra'][$orden_compra_id]['detalles'] as &$detalle) {
+                if ($detalle['punto'] == $row['punto'] && $detalle['cantidad'] == $row['cantidad']) {
+                    $detalle_existente = true;
+                    break;
                 }
-            } else {
-                $orden_compra_id = $row['orden_compra'];
-                if (!isset($response['orden_compra'][$orden_compra_id])) {
-                    // Datos de la orden de compra
-                    $response['orden_compra'][$orden_compra_id] = [
-                        'id' => $orden_compra_id,
-                        'total_pares' => $row['total_pares'],
-                        'horma' => [
-                            'id' => $row['horma_id'],
-                            'nombre' => $row['nombre_horma'],
-                            'precio' => $row['precio_horma']
-                        ],
-                        'detalles' => []
-                    ];
-                }
-
-                // Detalles de la orden de compra (se agrupan únicamente una vez)
-                $detalle_existente = false;
-                foreach ($response['orden_compra'][$orden_compra_id]['detalles'] as &$detalle) {
-                    if ($detalle['punto'] == $row['punto'] && $detalle['cantidad'] == $row['cantidad']) {
-                        $detalle_existente = true;
-                        break;
-                    }
-                }
-                
-                if (!$detalle_existente) {
-                    $response['orden_compra'][$orden_compra_id]['detalles'][] = [
-                        'punto' => $row['punto'],
-                        'cantidad' => $row['cantidad']
-                    ];
-                }
+            }
+            
+            if (!$detalle_existente) {
+                $response['orden_compra'][$orden_compra_id]['detalles'][] = [
+                    'punto' => $row['punto'],
+                    'cantidad' => $row['cantidad']
+                ];
             }
         }
 
-        // Reindexar el array de orden_compra para resetear los índices
         $response['orden_compra'] = array_values($response['orden_compra']);
 
         echo json_encode($response);
     } else {
-        error_log("No se encontraron datos en la consulta general para remision_id = $remision_id");
         http_response_code(404);
         echo json_encode(array("message" => "No se encontraron datos."));
     }
 }
+?>
