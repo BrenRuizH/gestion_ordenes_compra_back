@@ -5,7 +5,7 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
     require_once '../conexion.php';
     include '../config.php';
 
-    $query="SELECT r.id, c.codigo, r.total_pares, r.precio_final
+    $query="SELECT r.id, c.codigo, r.oc, r.total_pares, r.precio_final
 	    FROM remisiones r
 	    INNER JOIN clientes c ON r.cliente_id = c.id
 	    ORDER BY r.id DESC;";
@@ -22,6 +22,7 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
             $itemDetails=array(
                 "id" => $id,
                 "codigo" => $codigo,
+		"oc" => $oc,
                 "total_pares" => $total_pares,
                 "precio_final" => $precio_final,
             );
