@@ -7,7 +7,6 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
     $response = array();
 
-    // Consulta para cliente_id 36
     $query_cliente_36 = "
         SELECT c.razonSocial, c.direccion, c.telefono, c.id AS cliente,
                r.id AS remision, 
@@ -26,7 +25,6 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         ) AS total_suma ON r.id = total_suma.remision_id
         WHERE r.id = ?";
 
-    // Consulta para otros clientes
     $query_otros_clientes = "
         SELECT c.razonSocial, c.direccion, c.telefono, c.id AS cliente,
                      r.id AS remision,
@@ -41,7 +39,6 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
               INNER JOIN hormas h ON h.id = oc.horma_id
               WHERE r.id = ?";
 
-    // Verificar si el cliente es 36
     $cliente_query = "SELECT cliente_id FROM remisiones WHERE id = ?";
     $stmt = $mysql->prepare($cliente_query);
     $stmt->bind_param("i", $remision_id);
@@ -50,7 +47,6 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $cliente_data = $cliente_result->fetch_assoc();
     $cliente_id = $cliente_data['cliente_id'];
 
-    // Ejecutar la consulta correspondiente
     if ($cliente_id == 36) {
         $stmt = $mysql->prepare($query_cliente_36);
         $stmt->bind_param("ii", $remision_id, $remision_id);
@@ -83,7 +79,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                 ];
             }
 
-            $orden_compra_id = $row['remision']; // Usamos remision como identificador
+            $orden_compra_id = $row['remision'];
             if (!isset($response['orden_compra'][$orden_compra_id])) {
                 $response['orden_compra'][$orden_compra_id] = [
                     'id' => $orden_compra_id,
