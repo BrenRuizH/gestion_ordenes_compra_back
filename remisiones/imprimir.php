@@ -9,7 +9,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
     $query_cliente_36 = "
         SELECT c.razonSocial, c.direccion, c.telefono, c.id AS cliente,
-               r.id AS remision, 
+               r.id AS remision, r.extra, r.descripcion, 
                h.id AS horma_id, h.nombre AS nombre_horma, h.precio AS precio_horma,
                rpc.punto, rpc.cantidad, 
                total_suma.total_pares
@@ -27,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
     $query_otros_clientes = "
         SELECT c.razonSocial, c.direccion, c.telefono, c.id AS cliente,
-                     r.id AS remision,
+                     r.id AS remision, r.extra, r.descripcion,
                      oc.id AS orden_compra, oc.total_pares,
                      h.id AS horma_id, h.nombre AS nombre_horma, h.precio AS precio_horma,
                      doc.punto, doc.cantidad
@@ -75,7 +75,9 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
             if (empty($response['remision'])) {
                 $response['remision'][] = [
-                    'id' => $row['remision']
+                    'id' => $row['remision'],
+                    'extra' => $row['extra'],
+                    'descripcion' => $row['descripcion´]
                 ];
             }
 
