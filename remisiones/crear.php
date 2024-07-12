@@ -9,6 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $precio_final = $_POST['precio_final'];
     $extra = $_POST['extra'];
     $descripcion = $_POST['descripcion'];
+    $oc = $_POST['oc'];
     $folio = $_POST['folio'];
 
     $elementosAgregados = isset($_POST['elementosAgregados']) ? json_decode($_POST['elementosAgregados'], true) : [];
@@ -16,8 +17,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     try {
         $mysql->begin_transaction();
 
-        $stmt = $mysql->prepare("INSERT INTO remisiones (fecha, cliente_id, total_pares, precio_final, extra, descripcion) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("siidds", $fecha, $cliente_id, $total_pares, $precio_final, $extra, $descripcion);
+        $stmt = $mysql->prepare("INSERT INTO remisiones (fecha, cliente_id, total_pares, precio_final, extra, descripcion, oc) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("siiddss", $fecha, $cliente_id, $total_pares, $precio_final, $extra, $descripcion, $oc);
         if (!$stmt->execute()) {
             throw new Exception("Error al crear la remisión: " . $stmt->error);
         }
