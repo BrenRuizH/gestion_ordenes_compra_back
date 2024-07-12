@@ -117,7 +117,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         echo json_encode($response);
     } else {
         http_response_code(404);
-        echo json_encode(array("message" => "No se encontraron datos."));
+        echo json_encode(array("message" => "No se encontraron datos."), $response);
     }
 }
 ?>
