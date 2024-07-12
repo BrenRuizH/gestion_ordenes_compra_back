@@ -7,27 +7,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
     $response = array();
 
-    $query_cliente_36 = "
-        SELECT c.razonSocial, c.direccion, c.telefono, c.id AS cliente,
-               r.id AS remision, r.extra, r.descripcion, r.oc,
-               h.id AS horma_id, h.nombre AS nombre_horma, h.precio AS precio_horma,
-               rpc.punto, rpc.cantidad, 
-               total_suma.total_pares
-        FROM remisiones r
-        INNER JOIN clientes c ON r.cliente_id = c.id
-        INNER JOIN remision_puntos_cantidades rpc ON r.id = rpc.remision_id
-        INNER JOIN hormas h ON h.id = rpc.horma_id
-        INNER JOIN (
-          SELECT remision_id, SUM(cantidad) AS total_pares
-          FROM remision_puntos_cantidades
-          WHERE remision_id = ?
-          GROUP BY remision_id
-        ) AS total_suma ON r.id = total_suma.remision_id
-        WHERE r.id = ?";
-
-    $query_otros_clientes = "
-        SELECT c.razonSocial, c.direccion, c.telefono, c.id AS cliente,
-                     r.id AS remision, r.extra, r.descripcion,
+    $query = "SELECT c.razonSocial, c.direccion, c.telefono, c.id AS cliente,
+                     r.id AS remision,
                      oc.id AS orden_compra, oc.total_pares,
                      h.id AS horma_id, h.nombre AS nombre_horma, h.precio AS precio_horma,
                      doc.punto, doc.cantidad
@@ -37,26 +18,9 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
               INNER JOIN ordenes_compra oc ON rd.folio = oc.folio
               INNER JOIN detalles_orden_compra doc ON doc.orden_compra_id = oc.id
               INNER JOIN hormas h ON h.id = oc.horma_id
-              WHERE r.id = ?";
+              WHERE r.id = $remision_id;";
 
-    $cliente_query = "SELECT cliente_id FROM remisiones WHERE id = ?";
-    $stmt = $mysql->prepare($cliente_query);
-    $stmt->bind_param("i", $remision_id);
-    $stmt->execute();
-    $cliente_result = $stmt->get_result();
-    $cliente_data = $cliente_result->fetch_assoc();
-    $cliente_id = $cliente_data['cliente_id'];
-
-    if ($cliente_id == 36) {
-        $stmt = $mysql->prepare($query_cliente_36);
-        $stmt->bind_param("ii", $remision_id, $remision_id);
-    } else {
-        $stmt = $mysql->prepare($query_otros_clientes);
-        $stmt->bind_param("i", $remision_id);
-    }
-    
-    $stmt->execute();
-    $resultado = $stmt->get_result();
+    $resultado = $mysql->query($query);
 
     if ($resultado->num_rows > 0) {
         $response['cliente'] = [];
@@ -64,6 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         $response['orden_compra'] = [];
 
         while ($row = $resultado->fetch_assoc()) {
+            // Datos del cliente (solo se agrega una vez)
             if (empty($response['cliente'])) {
                 $response['cliente'][] = [
                     'id' => $row['cliente'],
@@ -73,17 +38,16 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                 ];
             }
 
+            // Datos de la remisión (solo se agrega una vez)
             if (empty($response['remision'])) {
                 $response['remision'][] = [
-                    'id' => $row['remision'],
-                    'extra' => $row['extra'],
-                    'descripcion' => $row['descripcion'],
-                    'oc' => $row['oc']
+                    'id' => $row['remision']
                 ];
             }
 
-            $orden_compra_id = $row['remision'];
+            $orden_compra_id = $row['orden_compra'];
             if (!isset($response['orden_compra'][$orden_compra_id])) {
+                // Datos de la orden de compra
                 $response['orden_compra'][$orden_compra_id] = [
                     'id' => $orden_compra_id,
                     'total_pares' => $row['total_pares'],
@@ -96,6 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                 ];
             }
 
+            // Detalles de la orden de compra (se agrupan únicamente una vez)
             $detalle_existente = false;
             foreach ($response['orden_compra'][$orden_compra_id]['detalles'] as &$detalle) {
                 if ($detalle['punto'] == $row['punto'] && $detalle['cantidad'] == $row['cantidad']) {
@@ -112,12 +77,13 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             }
         }
 
+        // Reindexar el array de orden_compra para resetear los índices
         $response['orden_compra'] = array_values($response['orden_compra']);
 
         echo json_encode($response);
     } else {
         http_response_code(404);
-        echo json_encode(array("message" => "No se encontraron datos."), $response);
+        echo json_encode(array("message" => "No se encontraron datos."));
     }
 }
 ?>
