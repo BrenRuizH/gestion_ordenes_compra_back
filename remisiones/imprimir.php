@@ -1,4 +1,3 @@
-<?php
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
     require_once '../conexion.php';
     include '../config.php';
@@ -7,6 +6,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
     $response = array();
 
+    // Consulta general
     $query = "SELECT c.razonSocial, c.direccion, c.telefono, c.id AS cliente,
                      r.id AS remision,
                      oc.id AS orden_compra, oc.total_pares,
@@ -79,6 +79,27 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
 
         // Reindexar el array de orden_compra para resetear los índices
         $response['orden_compra'] = array_values($response['orden_compra']);
+
+        // Si el cliente_id es 36, realizar la lógica específica
+        if (!empty($response['cliente']) && $response['cliente'][0]['id'] == 36) {
+            // Lógica específica para el cliente_id 36
+            foreach ($response['orden_compra'] as &$orden) {
+                // Modificar aquí lo que sea necesario para este cliente específico
+                // Por ejemplo, podrías agrupar los detalles de las órdenes de compra
+                $orden['detalles'] = array_reduce($orden['detalles'], function($carry, $item) {
+                    $key = $item['punto'];
+                    if (!isset($carry[$key])) {
+                        $carry[$key] = $item;
+                    } else {
+                        $carry[$key]['cantidad'] += $item['cantidad'];
+                    }
+                    return $carry;
+                }, []);
+                
+                // Convertir el resultado a una lista de detalles
+                $orden['detalles'] = array_values($orden['detalles']);
+            }
+        }
 
         echo json_encode($response);
     } else {
