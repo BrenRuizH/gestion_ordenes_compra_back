@@ -5,7 +5,7 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
     require_once '../conexion.php';
     include '../config.php';
 
-    $query="SELECT oc.id, oc.folio, c.codigo, oc.orden_compra_c, oc.fecha_orden, oc.fecha_entrega, oc.total_pares, h.precio*oc.total_pares AS precio, oc.facturaNo, oc.status
+    $query="SELECT oc.id, oc.folio, c.codigo, oc.orden_compra_c, oc.fecha_orden, oc.fecha_entrega, oc.total_pares, h.precio*oc.total_pares AS precio, oc.facturaNo, oc.status, oc.remision_id
 	    FROM ordenes_compra oc 
 	    INNER JOIN clientes c ON oc.cliente_id = c.id
         INNER JOIN hormas h ON oc.horma_id = h.id
@@ -30,7 +30,8 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
                 "total_pares" => $total_pares,
                 "precio" => $precio,
                 "facturaNo" => $facturaNo,
-                "status" => $status
+                "status" => $status,
+                "remision_id" => $remision_id
             );
             array_push($itemRecords["items"], $itemDetails);
  }

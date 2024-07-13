@@ -9,37 +9,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $precio_final = $_POST['precio_final'];
     $extra = $_POST['extra'];
     $descripcion = $_POST['descripcion'];
-    $folios = isset($_POST['folios']) ? json_decode($_POST['folios'], true) : [];
+    $folio = $_POST['folio'];
+
     $elementosAgregados = isset($_POST['elementosAgregados']) ? json_decode($_POST['elementosAgregados'], true) : [];
 
     try {
         $mysql->begin_transaction();
 
         $stmt = $mysql->prepare("INSERT INTO remisiones (fecha, cliente_id, total_pares, precio_final, extra, descripcion) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("siidds", $fecha, $cliente_id, $total_pares, $precio_final, $extra, $descripcion);
+        $stmt->bind_param("siiddss", $fecha, $cliente_id, $total_pares, $precio_final, $extra, $descripcion);
         if (!$stmt->execute()) {
             throw new Exception("Error al crear la remisión: " . $stmt->error);
         }
 
         $remision_id = $stmt->insert_id;
 
-        foreach ($folios as $folio) {
-            $folio_num = $folio['folio'];
-            $oc = isset($folio['oc']) ? $folio['oc'] : null;
-
-            $stmt = $mysql->prepare("INSERT INTO remision_detalles (remision_id, folio, oc) VALUES (?, ?, ?)");
-            $stmt->bind_param("iss", $remision_id, $folio_num, $oc);
+        $foliosArray = explode(',', $folio);
+        foreach ($foliosArray as $fol) {
+            $stmt = $mysql->prepare("INSERT INTO remision_detalles (remision_id, folio) VALUES (?, ?)");
+            $stmt->bind_param("is", $remision_id, trim($fol));
             if (!$stmt->execute()) {
                 throw new Exception("Error al insertar detalle de remisión: " . $stmt->error);
             }
-
-            if (!empty($oc)) {
-                $stmt = $mysql->prepare("UPDATE ordenes_compra SET status = 'REMISIONADO' WHERE folio = ?");
-                $stmt->bind_param("s", $folio_num);
-                if (!$stmt->execute()) {
-                    throw new Exception("Error al actualizar el status: " . $stmt->error);
-                }
+            $stmt= $mysql ->prepare ("UPDATE ordenes_compra SET status = 'REMISIONADO' WHERE folio = ?");
+            $stmt->bind_param("s",trim($fol));
+            if (!$stmt->execute()) {
+                throw new Exception("Error al actualizar el status: " . $stmt->error);
             }
+            $stmt= $mysql ->prepare ("UPDATE ordenes_compra SET remision_id = ? WHERE folio = ?");
+            $stmt->bind_param("is",$remision_id,trim($fol));
+            if (!$stmt->execute()) {
+                throw new Exception("Error al actualizar el status: " . $stmt->error);
+            }
+            
         }
 
         if ($cliente_id == 36) {
