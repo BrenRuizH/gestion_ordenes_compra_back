@@ -96,7 +96,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                        r.id AS remision, r.extra, r.descripcion,
                        oc.id AS orden_compra, oc.orden_compra_c, oc.total_pares,
                        h.id AS horma_id, h.nombre AS nombre_horma, h.precio AS precio_horma,
-                       doc.punto, doc.cantidad
+                       doc.punto, doc.cantidad, rd.oc
                 FROM remisiones r
                 INNER JOIN remision_detalles rd ON rd.remision_id = r.id
                 INNER JOIN clientes c ON r.cliente_id = c.id
