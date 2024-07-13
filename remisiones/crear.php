@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $precio_final = $_POST['precio_final'];
     $extra = $_POST['extra'];
     $descripcion = $_POST['descripcion'];
-    $folio = $_POST['folio'];
+    $folios = json_decode($_POST['folios'], true);
 
     $elementosAgregados = isset($_POST['elementosAgregados']) ? json_decode($_POST['elementosAgregados'], true) : [];
 
@@ -24,13 +24,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $remision_id = $stmt->insert_id;
 
-        $foliosArray = json_decode($folio, true);
-        foreach ($foliosArray as $item) {
+        foreach ($folios as $item) {
             $folio = $item['folio'];
-            $orden_compra = $item['oc'];
+            $oc = $item['oc'];
 
-            $stmt = $mysql->prepare("INSERT INTO remision_detalles (remision_id, folio, orden_compra) VALUES (?, ?, ?)");
-            $stmt->bind_param("isi", $remision_id, $folio, $orden_compra);
+            $stmt = $mysql->prepare("INSERT INTO remision_detalles (remision_id, folio, oc) VALUES (?, ?, ?)");
+            $stmt->bind_param("isi", $remision_id, $folio, $oc);
             if (!$stmt->execute()) {
                 throw new Exception("Error al insertar detalle de remisión: " . $stmt->error);
             }
@@ -42,7 +41,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
             
-
         if ($cliente_id == 36) {
             foreach ($elementosAgregados as $elemento) {
                 $horma_id = $elemento['horma_id'];
