@@ -61,7 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                     if (!isset($response['orden_compra'][$horma_id])) {
                         $response['orden_compra'][$horma_id] = [
                             'id' => $horma_id,
-                            'oc' => $oc,
+                            'oc' => $row['oc'],
                             'total_pares' => 0,
                             'horma' => [
                                 'id' => $row['horma_id'],
@@ -137,7 +137,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                     if (!isset($response['orden_compra'][$orden_compra_id])) {
                         $response['orden_compra'][$orden_compra_id] = [
                             'id' => $orden_compra_id,
-                            'oc' => $oc,
+                            'oc' => $row['oc'],
                             'total_pares' => $row['total_pares'],
                             'horma' => [
                                 'id' => $row['horma_id'],
