@@ -20,9 +20,9 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         if ($cliente_id == 36) {
             $query = "
                 SELECT c.razonSocial, c.direccion, c.telefono, c.id AS cliente,
-                       r.id AS remision, r.extra, r.descripcion, r.oc,
+                       r.id AS remision, r.extra, r.descripcion,
                        h.id AS horma_id, h.nombre AS nombre_horma, h.precio AS precio_horma,
-                       rpc.punto, rpc.cantidad
+                       rpc.punto, rpc.cantidad, rpc.oc
                 FROM remisiones r
                 INNER JOIN clientes c ON r.cliente_id = c.id
                 INNER JOIN remision_puntos_cantidades rpc ON r.id = rpc.remision_id
@@ -53,8 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                         $response['remision'][] = [
                             'id' => $row['remision'],
                             'extra' => $row['extra'],
-                            'descripcion' => $row['descripcion'],
-                            'oc' => $row['oc']
+                            'descripcion' => $row['descripcion']
                         ];
                     }
 
@@ -62,6 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                     if (!isset($response['orden_compra'][$horma_id])) {
                         $response['orden_compra'][$horma_id] = [
                             'id' => $horma_id,
+                            'oc' => $oc,
                             'total_pares' => 0,
                             'horma' => [
                                 'id' => $row['horma_id'],
@@ -94,7 +94,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             $query = "
                 SELECT c.razonSocial, c.direccion, c.telefono, c.id AS cliente,
                        r.id AS remision, r.extra, r.descripcion,
-                       oc.id AS orden_compra, oc.total_pares,
+                       oc.id AS orden_compra, oc.orden_compra_c, oc.total_pares,
                        h.id AS horma_id, h.nombre AS nombre_horma, h.precio AS precio_horma,
                        doc.punto, doc.cantidad
                 FROM remisiones r
@@ -137,6 +137,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                     if (!isset($response['orden_compra'][$orden_compra_id])) {
                         $response['orden_compra'][$orden_compra_id] = [
                             'id' => $orden_compra_id,
+                            'oc' => $orden_compra_c,
                             'total_pares' => $row['total_pares'],
                             'horma' => [
                                 'id' => $row['horma_id'],
