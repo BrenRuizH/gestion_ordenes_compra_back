@@ -25,16 +25,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         foreach ($folios as $folio) {
             $folio_num = $folio['folio'];
-            $oc = $folio['oc'];
+            $oc = isset($folio['oc']) ? $folio['oc'] : null;
+
             $stmt = $mysql->prepare("INSERT INTO remision_detalles (remision_id, folio, oc) VALUES (?, ?, ?)");
             $stmt->bind_param("iss", $remision_id, $folio_num, $oc);
             if (!$stmt->execute()) {
                 throw new Exception("Error al insertar detalle de remisión: " . $stmt->error);
             }
-            $stmt = $mysql->prepare("UPDATE ordenes_compra SET status = 'REMISIONADO' WHERE folio = ?");
-            $stmt->bind_param("s", $folio_num);
-            if (!$stmt->execute()) {
-                throw new Exception("Error al actualizar el status: " . $stmt->error);
+
+            if (!empty($oc)) {
+                $stmt = $mysql->prepare("UPDATE ordenes_compra SET status = 'REMISIONADO' WHERE folio = ?");
+                $stmt->bind_param("s", $folio_num);
+                if (!$stmt->execute()) {
+                    throw new Exception("Error al actualizar el status: " . $stmt->error);
+                }
             }
         }
 
