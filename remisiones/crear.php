@@ -17,8 +17,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     try {
         $mysql->begin_transaction();
 
-        $stmt = $mysql->prepare("INSERT INTO remisiones (fecha, cliente_id, total_pares, precio_final, extra, descripcion, oc) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("siiddss", $fecha, $cliente_id, $total_pares, $precio_final, $extra, $descripcion, $oc);
+        $stmt = $mysql->prepare("INSERT INTO remisiones (fecha, cliente_id, total_pares, precio_final, extra, descripcion) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("siidds", $fecha, $cliente_id, $total_pares, $precio_final, $extra, $descripcion);
         if (!$stmt->execute()) {
             throw new Exception("Error al crear la remisión: " . $stmt->error);
         }
@@ -45,8 +45,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 foreach ($elemento['puntosYcantidades'] as $puntoCantidad) {
                     $punto = $puntoCantidad['punto'];
                     $cantidad = $puntoCantidad['cantidad'];
-                    $stmt = $mysql->prepare("INSERT INTO remision_puntos_cantidades (remision_id, horma_id, punto, cantidad) VALUES (?, ?, ?, ?)");
-                    $stmt->bind_param("iiid", $remision_id, $horma_id, $punto, $cantidad);
+                    $stmt = $mysql->prepare("INSERT INTO remision_puntos_cantidades (remision_id, horma_id, punto, cantidad, oc) VALUES (?, ?, ?, ?, ?)");
+                    $stmt->bind_param("iiids", $remision_id, $horma_id, $punto, $cantidad, $oc);
                     if (!$stmt->execute()) {
                         throw new Exception("Error al insertar detalle de horma: " . $stmt->error);
                     }
