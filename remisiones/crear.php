@@ -9,7 +9,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $precio_final = $_POST['precio_final'];
     $extra = $_POST['extra'];
     $descripcion = $_POST['descripcion'];
-    $oc = $_POST['oc'];
     $folio = $_POST['folio'];
 
     $elementosAgregados = isset($_POST['elementosAgregados']) ? json_decode($_POST['elementosAgregados'], true) : [];
@@ -17,8 +16,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     try {
         $mysql->begin_transaction();
 
-        $stmt = $mysql->prepare("INSERT INTO remisiones (fecha, cliente_id, total_pares, precio_final, extra, descripcion, oc) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("siiddss", $fecha, $cliente_id, $total_pares, $precio_final, $extra, $descripcion, $oc);
+        $stmt = $mysql->prepare("INSERT INTO remisiones (fecha, cliente_id, total_pares, precio_final, extra, descripcion) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("siidds", $fecha, $cliente_id, $total_pares, $precio_final, $extra, $descripcion);
         if (!$stmt->execute()) {
             throw new Exception("Error al crear la remisión: " . $stmt->error);
         }
@@ -28,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $foliosArray = explode(',', $folio);
         foreach ($foliosArray as $fol) {
             $stmt = $mysql->prepare("INSERT INTO remision_detalles (remision_id, folio) VALUES (?, ?)");
-            $stmt->bind_param("is", $remision_id, trim($fol));
+            $stmt->bind_param("iss", $remision_id, trim($fol));
             if (!$stmt->execute()) {
                 throw new Exception("Error al insertar detalle de remisión: " . $stmt->error);
             }
@@ -45,8 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 foreach ($elemento['puntosYcantidades'] as $puntoCantidad) {
                     $punto = $puntoCantidad['punto'];
                     $cantidad = $puntoCantidad['cantidad'];
-                    $stmt = $mysql->prepare("INSERT INTO remision_puntos_cantidades (remision_id, horma_id, punto, cantidad, oc) VALUES (?, ?, ?, ?, ?)");
-                    $stmt->bind_param("iiids", $remision_id, $horma_id, $punto, $cantidad, $oc);
+                    $stmt = $mysql->prepare("INSERT INTO remision_puntos_cantidades (remision_id, horma_id, punto, cantidad) VALUES (?, ?, ?, ?)");
+                    $stmt->bind_param("iiid", $remision_id, $horma_id, $punto, $cantidad);
                     if (!$stmt->execute()) {
                         throw new Exception("Error al insertar detalle de horma: " . $stmt->error);
                     }
