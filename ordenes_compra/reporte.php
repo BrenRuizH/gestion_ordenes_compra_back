@@ -8,7 +8,7 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
     $fecha_inicio = $_GET['fecha_inicio'];
     $fecha_fin = $_GET['fecha_fin'];
     
-    $query="SELECT oc.id as orden_id, oc.folio, c.codigo, oc.orden_compra_c, oc.fecha_orden, oc.fecha_entrega, oc.total_pares, oc.facturaNo, oc.status  
+    $query="SELECT oc.id as orden_id, oc.folio, c.codigo, oc.orden_compra_c, oc.fecha_orden, oc.fecha_entrega, oc.total_pares, oc.facturaNo,oc.remision_id, oc.status  
             FROM ordenes_compra oc 
             INNER JOIN clientes c ON oc.cliente_id = c.id
             WHERE oc.fecha_orden BETWEEN '$fecha_inicio' AND '$fecha_fin'
@@ -31,7 +31,8 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
                 "fecha_entrega" => $fecha_entrega,
                 "total_pares" => $total_pares,
                 "facturaNo" => $facturaNo,
-                "status" => $status
+                "status" => $status,
+                "remision_id" => $remision_id
             );
             array_push($itemRecords["items"], $itemDetails);
         }
