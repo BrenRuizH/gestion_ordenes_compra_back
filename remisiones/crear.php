@@ -9,8 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $precio_final = $_POST['precio_final'];
     $extra = $_POST['extra'];
     $descripcion = $_POST['descripcion'];
-    $folio = $_POST['folio'];
-
+    $folios = isset($_POST['folios']) ? json_decode($_POST['folios'], true) : [];
     $elementosAgregados = isset($_POST['elementosAgregados']) ? json_decode($_POST['elementosAgregados'], true) : [];
 
     try {
@@ -24,15 +23,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $remision_id = $stmt->insert_id;
 
-        $foliosArray = explode(',', $folio);
-        foreach ($foliosArray as $fol) {
-            $stmt = $mysql->prepare("INSERT INTO remision_detalles (remision_id, folio) VALUES (?, ?)");
-            $stmt->bind_param("iss", $remision_id, trim($fol));
+        foreach ($folios as $folio) {
+            $folio_num = $folio['folio'];
+            $oc = $folio['oc'];
+            $stmt = $mysql->prepare("INSERT INTO remision_detalles (remision_id, folio, oc) VALUES (?, ?, ?)");
+            $stmt->bind_param("iss", $remision_id, $folio_num, $oc);
             if (!$stmt->execute()) {
                 throw new Exception("Error al insertar detalle de remisión: " . $stmt->error);
             }
-            $stmt= $mysql ->prepare ("UPDATE ordenes_compra SET status = 'REMISIONADO' WHERE folio = ?");
-            $stmt->bind_param("s",trim($fol));
+            $stmt = $mysql->prepare("UPDATE ordenes_compra SET status = 'REMISIONADO' WHERE folio = ?");
+            $stmt->bind_param("s", $folio_num);
             if (!$stmt->execute()) {
                 throw new Exception("Error al actualizar el status: " . $stmt->error);
             }
