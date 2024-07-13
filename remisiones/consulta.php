@@ -6,7 +6,7 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
 
     $cliente_id = $_GET['cliente_id'];
 
-    $query="SELECT oc.folio, oc.total_pares, h.precio * oc.total_pares AS precio
+    $query="SELECT oc.folio, oc.orden_compra_c, oc.total_pares, h.precio * oc.total_pares AS precio
         FROM ordenes_compra oc
         INNER JOIN hormas h ON oc.horma_id = h.id
         LEFT JOIN remision_detalles rd ON oc.folio = rd.folio
@@ -24,6 +24,7 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
             extract($item);
             $itemDetails=array(
                 "folio" => $folio,
+                "orden_compra_c" => $orden_compra_c,
                 "total_pares" => $total_pares,
                 "precio" => $precio
             );
