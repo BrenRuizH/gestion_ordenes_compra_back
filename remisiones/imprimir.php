@@ -137,7 +137,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                     if (!isset($response['orden_compra'][$orden_compra_id])) {
                         $response['orden_compra'][$orden_compra_id] = [
                             'id' => $orden_compra_id,
-                            'oc' => $orden_compra_c,
+                            'oc' => $oc,
                             'total_pares' => $row['total_pares'],
                             'horma' => [
                                 'id' => $row['horma_id'],
