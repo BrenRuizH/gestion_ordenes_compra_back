@@ -7,12 +7,14 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
 
     $fecha_inicio = $_GET['fecha_inicio'];
     $fecha_fin = $_GET['fecha_fin'];
+    $cliente_id = $_GET['cliente_id'];
     
-    $query="SELECT oc.id as orden_id, oc.folio, c.codigo, oc.orden_compra_c, oc.fecha_orden, oc.fecha_entrega, oc.total_pares, oc.facturaNo,oc.remision_id, oc.status  
-            FROM ordenes_compra oc 
-            INNER JOIN clientes c ON oc.cliente_id = c.id
-            WHERE oc.fecha_orden BETWEEN '$fecha_inicio' AND '$fecha_fin'
-            ORDER BY oc.fecha_orden DESC, oc.folio DESC;";
+    $query="SELECT oc.id as orden_id, oc.folio, c.codigo, oc.orden_compra_c, oc.fecha_orden, oc.fecha_entrega, oc.total_pares, oc.facturaNo, oc.remision_id, oc.status
+                FROM ordenes_compra oc 
+                INNER JOIN clientes c ON oc.cliente_id = c.id
+                WHERE oc.fecha_orden BETWEEN '$fecha_inicio' AND '$fecha_fin'
+                AND ('$cliente_id' IS NULL OR oc.cliente_id = '$cliente_id')
+                ORDER BY oc.fecha_orden DESC, oc.folio DESC;";
 
     $resultado=$mysql->query($query);
 
