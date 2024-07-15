@@ -9,9 +9,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $cliente_id = $_POST['cliente_id'];
     $total_pares = $_POST['total_pares'];
     $precio_final = $_POST['precio_final'];
-    $folio = $_POST['folio'];
+    $folios = json_decode($_POST['folios'], true);
     $extra = $_POST['extra'];
     $descripcion = $_POST['descripcion'];
+    
 
     try {
         $mysql->begin_transaction();
@@ -22,10 +23,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             throw new Exception("Error al modificar la remisión: " . $stmt->error);
         }
 
-       $foliosArray = explode(',', $folio);
-        foreach ($foliosArray as $fol) {
-            $stmt = $mysql->prepare("INSERT INTO remision_detalles (remision_id, folio) VALUES (?, ?)");
-            $stmt->bind_param("is", $id, trim($fol));
+        foreach ($folios as $item) {
+            $folio = $item['folio'];
+            $oc = $item['oc'];
+            
+            $stmt = $mysql->prepare("INSERT INTO remision_detalles (remision_id, folio, oc) VALUES (?, ?, ?)");
+            $stmt->bind_param("isi", $remision_id, $folio, $oc);
             if (!$stmt->execute()) {
                 throw new Exception("Error al insertar detalle de remisión: " . $stmt->error);
             }
