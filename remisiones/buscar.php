@@ -6,10 +6,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     
     $texto = $_GET['texto'];
 
-    $query = "SELECT r.id, r.codigo, r.total_pares, r.precio_final
+    $query = "SELECT r.id, c.codigo, r.total_pares, r.precio_final
         FROM remisiones r
 	INNER JOIN clientes c ON r.cliente_id = c.id
-        WHERE r.codigo LIKE '%$texto%' 
+    WHERE c.codigo LIKE '%$texto%'
 	ORDER BY r.id DESC;";
 
     $resultado=$mysql->query($query);
