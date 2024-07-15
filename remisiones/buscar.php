@@ -4,12 +4,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     require_once '../conexion.php';
     include '../config.php';
     
-    $id = $_GET['id'];
+    $texto = $_GET['texto'];
 
-    $query = "SELECT r.id, c.codigo, r.total_pares, r.precio_final
+    $query = "SELECT r.id, r.codigo, r.total_pares, r.precio_final
         FROM remisiones r
 	INNER JOIN clientes c ON r.cliente_id = c.id
-        WHERE c.id = $id
+        WHERE r.codigo LIKE '%$texto%' 
 	ORDER BY r.id DESC;";
 
     $resultado=$mysql->query($query);
