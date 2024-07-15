@@ -35,7 +35,7 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
         }
     }
 
-    $query2="SELECT id, folio
+    $query2="SELECT id, folio, oc
              FROM remision_detalles
              WHERE remision_id = $remision_id;";
 
@@ -46,7 +46,8 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
             extract($item2);
             $itemDetails2=array(
                 "id" => $id,
-                "folio" => $folio
+                "folio" => $folio,
+                "oc" => $oc
             );
             array_push($itemRecords["items2"], $itemDetails2);
         }
