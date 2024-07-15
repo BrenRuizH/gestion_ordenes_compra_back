@@ -11,7 +11,7 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
     $itemRecords["items1"]=array();
     $itemRecords["items2"]=array();
 
-    $query1="SELECT r.id, r.fecha, r.cliente_id, c.codigo AS cliente, r.total_pares, r.precio_final
+    $query1="SELECT r.id, r.fecha, r.cliente_id, c.codigo AS cliente, r.total_pares, r.precio_final, r.extra, r.descripcion
              FROM remisiones r 
              INNER JOIN clientes c ON r.cliente_id = c.id
              WHERE r.id = $remision_id;";
@@ -27,7 +27,9 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
                 "cliente_id" => $cliente_id,
                 "cliente" => $cliente,
                 "total_pares" => $total_pares,
-                "precio_final" => $precio_final
+                "precio_final" => $precio_final,
+                "extra" => $extra,
+                "descripcion" => $descripcion
             );
             array_push($itemRecords["items1"], $itemDetails1);
         }
