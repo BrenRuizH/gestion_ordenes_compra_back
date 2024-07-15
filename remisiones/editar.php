@@ -10,12 +10,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $total_pares = $_POST['total_pares'];
     $precio_final = $_POST['precio_final'];
     $folio = $_POST['folio'];
+    $extra = $_POST['extra'];
+    $descripcion = $_POST['descripcion'];
 
     try {
         $mysql->begin_transaction();
 
-        $stmt = $mysql->prepare("CALL EditarRemisionYDetalles(?, ?, ?, ?, ?)");
-        $stmt->bind_param("isiid", $id, $fecha, $cliente_id, $total_pares, $precio_final);
+        $stmt = $mysql->prepare("CALL EditarRemisionYDetalles(?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("isiidds", $id, $fecha, $cliente_id, $total_pares, $precio_final, $extra, $descripcion);
         if (!$stmt->execute()) {
             throw new Exception("Error al modificar la remisión: " . $stmt->error);
         }
