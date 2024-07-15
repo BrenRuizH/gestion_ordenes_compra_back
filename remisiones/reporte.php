@@ -7,12 +7,17 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
 
     $fecha_inicio = $_GET['fecha_inicio'];
     $fecha_fin = $_GET['fecha_fin'];
+    $cliente_id = isset($_GET['cliente_id']) ? $_GET['cliente_id'] : null;
 
     $query="SELECT r.id, c.codigo, r.total_pares, r.precio_final
 	    FROM remisiones r
 	    INNER JOIN clientes c ON r.cliente_id = c.id
-      WHERE fecha BETWEEN '$fecha_inicio' AND '$fecha_fin'
-	    ORDER BY r.id DESC;";
+      WHERE fecha BETWEEN '$fecha_inicio' AND '$fecha_fin'";
+
+    if ($cliente_id !== null) {
+        $query .= " AND r.cliente_id = '$cliente_id'";
+        }
+    $query .= " ORDER BY r.id";
 
     $resultado=$mysql->query($query);
     if($resultado->num_rows > 0)
