@@ -28,13 +28,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $oc = $item['oc'];
             
             $stmt = $mysql->prepare("INSERT INTO remision_detalles (remision_id, folio, oc) VALUES (?, ?, ?)");
-            $stmt->bind_param("isi", $remision_id, $folio, $oc);
+            $stmt->bind_param("iss", $id, $folio, $oc);
             if (!$stmt->execute()) {
                 throw new Exception("Error al insertar detalle de remisión: " . $stmt->error);
             }
             
-            $stmt= $mysql ->prepare ("UPDATE ordenes_compra SET status = 'REMISIONADO' WHERE folio = ?");
-            $stmt->bind_param("s",trim($fol));
+            $stmt= $mysql ->prepare ("UPDATE ordenes_compra SET status = 'REMISIONADO', remision_id = ? WHERE folio = ?");
+            $stmt->bind_param("is", $id, $folio);
             if (!$stmt->execute()) {
                 throw new Exception("Error al actualizar el status: " . $stmt->error);
             }
