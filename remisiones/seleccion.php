@@ -16,11 +16,13 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
              INNER JOIN clientes c ON r.cliente_id = c.id
              WHERE r.id = $remision_id;";
 
-    $resultado1=$mysql->query($query1);
+    $resultado1 = $mysql->query($query1);
+    $cliente_id = null;
 
     if($resultado1->num_rows > 0) {
         while ($item1 = $resultado1->fetch_assoc()) {
             extract($item1);
+            $cliente_id = $cliente_id;
             $itemDetails1=array(
                 "id" => $id,
                 "fecha" => $fecha,
@@ -35,20 +37,36 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
         }
     }
 
-    $query2="SELECT id, folio, oc
-             FROM remision_detalles
-             WHERE remision_id = $remision_id;";
+    if ($cliente_id == 36) {
+        $query2="SELECT rpc.id, rpc.oc, rpc.horma_id, h.nombre AS horma rpc.punto, rpc.cantidad
+                 FROM remision_puntos_cantidades rpc
+                 INNER JOIN
+                 WHERE remision_id = $remision_id;";
+    } else {
+        $query2="SELECT id, folio, oc
+                 FROM remision_detalles
+                 WHERE remision_id = $remision_id;";
+    }
 
-    $resultado2=$mysql->query($query2);
+    $resultado2 = $mysql->query($query2);
 
     if($resultado2->num_rows > 0) {
         while ($item2 = $resultado2->fetch_assoc()) {
             extract($item2);
-            $itemDetails2=array(
-                "id" => $id,
-                "folio" => $folio,
-                "oc" => $oc
-            );
+            $itemDetails2 = $cliente_id == 36
+                ? array(
+                    "id" => $id,
+                    "oc" => $oc,
+                    "horma_id" => $horma_id,
+                    "horma" => $horma,
+                    "punto" => $punto,
+                    "cantidad" => $cantidad
+                )
+                : array(
+                    "id" => $id,
+                    "folio" => $folio,
+                    "oc" => $oc
+                );
             array_push($itemRecords["items2"], $itemDetails2);
         }
     }
