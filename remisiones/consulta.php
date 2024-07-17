@@ -7,22 +7,12 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
     $cliente_id = $_GET['cliente_id'];
 
     $query="SELECT oc.folio, oc.orden_compra_c, oc.total_pares, h.precio * oc.total_pares AS precio
-                FROM ordenes_compra oc
-                INNER JOIN hormas h ON oc.horma_id = h.id
-                WHERE oc.cliente_id = $cliente_id
-                AND (
-                    NOT EXISTS (
-                        SELECT 1 
-                        FROM remision_detalles rd 
-                        WHERE rd.folio = oc.folio
-                    )
-                    OR EXISTS (
-                        SELECT 1 
-                        FROM remision_detalles rd 
-                        WHERE rd.folio = oc.folio AND rd.remision_id = $remision_id
-                    )
-                )
-                ORDER BY oc.fecha_orden DESC, oc.folio DESC;";
+        FROM ordenes_compra oc
+        INNER JOIN hormas h ON oc.horma_id = h.id
+        LEFT JOIN remision_detalles rd ON oc.folio = rd.folio
+        WHERE oc.cliente_id = $cliente_id
+        OR (rd.folio IS NOT NULL AND rd.remision_id = $remision_id)
+        ORDER BY oc.fecha_orden DESC, oc.folio DESC";
   
     $resultado=$mysql->query($query);
     if($resultado->num_rows > 0)
