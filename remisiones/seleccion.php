@@ -40,7 +40,7 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
     if ($cliente_id == 36) {
         $query2="SELECT rpc.id, rpc.oc, rpc.horma_id, h.nombre AS horma, rpc.punto, rpc.cantidad
                  FROM remision_puntos_cantidades rpc
-                 INNER JOIN hormas h
+                 INNER JOIN hormas h ON rpc.horma_id = h.id
                  WHERE remision_id = $remision_id;";
     } else {
         $query2="SELECT id, folio, oc
