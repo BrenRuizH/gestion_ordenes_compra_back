@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $punto = $puntoCantidad['punto'];
                     $cantidad = $puntoCantidad['cantidad'];
                     $stmt = $mysql->prepare("INSERT INTO remision_puntos_cantidades (remision_id, horma_id, punto, cantidad, oc) VALUES (?, ?, ?, ?, ?)");
-                    $stmt->bind_param("iiids", $remision_id, $horma_id, $punto, $cantidad, $oc);
+                    $stmt->bind_param("iidis", $remision_id, $horma_id, $punto, $cantidad, $oc);
                     if (!$stmt->execute()) {
                         throw new Exception("Error al insertar detalle de horma: " . $stmt->error);
                     }
