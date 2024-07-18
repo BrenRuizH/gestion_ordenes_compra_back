@@ -16,12 +16,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     try {
         $mysql->begin_transaction();
+
+        // Llama al procedimiento almacenado para editar la remisión
         $stmt = $mysql->prepare("CALL EditarRemisionYDetalles(?, ?, ?, ?, ?, ?, ?)");
         $stmt->bind_param("isiidds", $id, $fecha, $cliente_id, $total_pares, $precio_final, $extra, $descripcion);
         if (!$stmt->execute()) {
             throw new Exception("Error al modificar la remisión: " . $stmt->error);
         }
 
+        // Eliminar los detalles existentes de la remisión
+        $stmt = $mysql->prepare("DELETE FROM remision_detalles WHERE remision_id = ?");
+        $stmt->bind_param("i", $id);
+        if (!$stmt->execute()) {
+            throw new Exception("Error al eliminar detalles de remisión: " . $stmt->error);
+        }
+
+        // Inserta los detalles de remisión y actualiza el estado de las órdenes de compra
         foreach ($folios as $item) {
             $folio = $item['folio'];
             $oc = $item['oc'];
@@ -39,11 +49,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
 
+        // Si el cliente_id es 36, inserta los detalles de horma
         if ($cliente_id == 36) {
+            // Elimina los detalles anteriores para la remisión específica
+            $stmt = $mysql->prepare("DELETE FROM remision_puntos_cantidades WHERE remision_id = ?");
+            $stmt->bind_param("i", $id);
+            if (!$stmt->execute()) {
+                throw new Exception("Error al eliminar detalles de horma anteriores: " . $stmt->error);
+            }
+
+            // Inserta los nuevos detalles
             foreach ($elementosAgregados as $elemento) {
                 $horma_id = $elemento['horma_id'];
                 $oc = $elemento['oc'];
-                foreach ($elemento['puntosYcantidades'] as $puntoCantidad) {
+                foreach ($elemento['puntos'] as $puntoCantidad) {
                     $punto = $puntoCantidad['punto'];
                     $cantidad = $puntoCantidad['cantidad'];
                     $stmt = $mysql->prepare("INSERT INTO remision_puntos_cantidades (remision_id, horma_id, punto, cantidad, oc) VALUES (?, ?, ?, ?, ?)");
