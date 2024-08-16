@@ -12,9 +12,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $materiales = isset($_POST['materiales']) ? "'".$_POST['materiales']."'" : 'NULL';
     $observaciones = isset($_POST['observaciones']) ? "'".$_POST['observaciones']."'" : 'NULL';
     $precio = $_POST['precio'];
+    $motivo_cambio = isset($_POST['motivo_cambio']) ? "'".$_POST['motivo_cambio']."'" : 'NULL';
 
 
-    $query = "CALL EditarHorma($id, '$nombre', '$cliente_id', $matriz, $cambrillon, $materiales, $observaciones, $precio);";
+
+    $query = "CALL EditarHorma($id, '$nombre', '$cliente_id', $matriz, $cambrillon, $materiales, $observaciones, $precio, $motivo_cambio);";
 
     $resultSet = $mysql->query($query);
     if(!$resultSet){
