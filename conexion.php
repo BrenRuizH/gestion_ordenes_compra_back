@@ -6,5 +6,5 @@
 $mysql = new mysqli("127.0.0.1", "root", "root", "prueba");
 
 if ($mysql->connect_error) {
-    die("Error de conexión");
+    die("Error de conexión: " . $mysql->connect_error);
 }
