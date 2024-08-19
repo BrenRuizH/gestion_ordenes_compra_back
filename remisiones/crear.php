@@ -7,7 +7,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $cliente_id = $_POST['cliente_id'];
     $total_pares = $_POST['total_pares'];
     $precio_final = $_POST['precio_final'];
-    $precio_unitario = $_POST['precio_unitario'];
     $extra = $_POST['extra'];
     $descripcion = $_POST['descripcion'];
     $folios = json_decode($_POST['folios'], true);
