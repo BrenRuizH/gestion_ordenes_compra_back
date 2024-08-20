@@ -96,8 +96,9 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                 SELECT c.razonSocial, c.direccion, c.telefono, c.id AS cliente,
                        r.id AS remision, r.extra, r.descripcion, r.fecha,
                        oc.id AS orden_compra, oc.orden_compra_c, oc.total_pares,
-                       h.id AS horma_id, h.nombre AS nombre_horma, h.precio AS precio_horma,
-                       doc.punto, doc.cantidad, rd.oc
+                       rd.precio AS precio_remision_detalle, rd.oc,
+                       h.id AS horma_id, h.nombre AS nombre_horma,
+                       doc.punto, doc.cantidad
                 FROM remisiones r
                 INNER JOIN remision_detalles rd ON rd.remision_id = r.id
                 INNER JOIN clientes c ON r.cliente_id = c.id
@@ -143,9 +144,9 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                             'total_pares' => $row['total_pares'],
                             'horma' => [
                                 'id' => $row['horma_id'],
-                                'nombre' => $row['nombre_horma'],
-                                'precio' => $row['precio_horma']
+                                'nombre' => $row['nombre_horma']
                             ],
+                            'precio' => $row['precio_remision_detalle'],
                             'detalles' => []
                         ];
                     }
