@@ -20,14 +20,14 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         if ($cliente_id == 36) {
             $query = "
                 SELECT c.razonSocial, c.direccion, c.telefono, c.id AS cliente,
-                       r.id AS remision, r.extra, r.descripcion, r.fecha,
-                       h.id AS horma_id, h.nombre AS nombre_horma, h.precio AS precio_horma,
-                       rpc.punto, rpc.cantidad, rpc.oc
-                FROM remisiones r
-                INNER JOIN clientes c ON r.cliente_id = c.id
-                INNER JOIN remision_puntos_cantidades rpc ON r.id = rpc.remision_id
-                INNER JOIN hormas h ON h.id = rpc.horma_id
-                WHERE r.id = ?;";
+               r.id AS remision, r.extra, r.descripcion, r.fecha,
+               h.id AS horma_id, h.nombre AS nombre_horma, rpc.precio AS precio_horma,
+               rpc.punto, rpc.cantidad, rpc.oc
+        FROM remisiones r
+        INNER JOIN clientes c ON r.cliente_id = c.id
+        INNER JOIN remision_puntos_cantidades rpc ON r.id = rpc.remision_id
+        INNER JOIN hormas h ON h.id = rpc.horma_id
+        WHERE r.id = ?;";
             
             $stmt = $mysql->prepare($query);
             $stmt->bind_param("i", $remision_id);
@@ -67,8 +67,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                             'horma' => [
                                 'id' => $row['horma_id'],
                                 'nombre' => $row['nombre_horma'],
-                                'precio' => $row['precio_horma']
                             ],
+                            'precio' => $row['precio_horma'], // Mueve el precio fuera de la horma
                             'detalles' => []
                         ];
                     }
