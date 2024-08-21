@@ -6,7 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     
     $id = $_GET['id'];
 
-    $query = "SELECT h.id, h.nombre, h.matriz, h.cambrillon, h.materiales, h.observaciones, h.precio, c.codigo AS cliente FROM hormas h
+    $query = "SELECT h.id, h.nombre, h.matriz, h.cambrillon, h.materiales, h.observaciones, h.precio, h.precio_anterior, h.fecha_modificacion, c.codigo AS cliente FROM hormas h
               INNER JOIN clientes c ON h.cliente_id = c.id 
               WHERE c.id = $id;";
 
@@ -24,7 +24,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                 "materiales" => $materiales,
                 "observaciones" => $observaciones,
                 "precio" => $precio,
-                "cliente" => $cliente
+                "cliente" => $cliente,
+                "precio_anterior" => $precio_anterior,
+                "fecha_modificacion" => $fecha_modificacion
             );
             array_push($itemRecords["items"], $itemDetails);
         }
