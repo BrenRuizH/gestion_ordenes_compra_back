@@ -43,7 +43,7 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
                  INNER JOIN hormas h ON rpc.horma_id = h.id
                  WHERE remision_id = $remision_id;";
     } else {
-        $query2="SELECT id, folio, oc
+        $query2="SELECT id, folio, oc, precio
                  FROM remision_detalles
                  WHERE remision_id = $remision_id;";
     }
@@ -66,7 +66,8 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
                 : array(
                     "id" => $id,
                     "folio" => $folio,
-                    "oc" => $oc
+                    "oc" => $oc,
+                    "precio" => $precio
                 );
             array_push($itemRecords["items2"], $itemDetails2);
         }
