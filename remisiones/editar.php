@@ -35,9 +35,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         foreach ($folios as $item) {
             $folio = $item['folio'];
             $oc = $item['oc'];
+            $precio_unitario = $item ['precio_unitario'];
             
-            $stmt = $mysql->prepare("INSERT INTO remision_detalles (remision_id, folio, oc) VALUES (?, ?, ?)");
-            $stmt->bind_param("iss", $id, $folio, $oc);
+            $stmt = $mysql->prepare("INSERT INTO remision_detalles (remision_id, folio, oc, precio) VALUES (?, ?, ?, ?)");
+            $stmt->bind_param("issd", $id, $folio, $oc, $precio_unitario);
             if (!$stmt->execute()) {
                 throw new Exception("Error al insertar detalle de remisión: " . $stmt->error);
             }
