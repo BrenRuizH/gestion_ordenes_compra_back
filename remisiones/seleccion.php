@@ -43,7 +43,7 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
                  INNER JOIN hormas h ON rpc.horma_id = h.id
                  WHERE remision_id = $remision_id;";
     } else {
-        $query2="SELECT rd.id, rd.folio, rd.oc, rd.precio AS precio_seleccionado, 
+        $query2="SELECT rd.id, rd.folio, rd.oc, rd.precio AS precio, 
                           h.precio AS precio_actual, h.precio_anterior
                    FROM remision_detalles rd
                    LEFT JOIN hormas h ON h.id = (SELECT horma_id FROM ordenes_compra 
@@ -71,7 +71,7 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
                     "id" => $id,
                     "folio" => $folio,
                     "oc" => $oc,
-                    "precio_actual" => $precio_actual,
+                    "precio" => $precio,
                     "precio_anterior" => $precio_anterior,
                     "precio_seleccionado" => $precio_seleccionado
                 );
