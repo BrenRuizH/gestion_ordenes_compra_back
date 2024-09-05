@@ -46,7 +46,7 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
         $query2="SELECT rd.id, rd.folio, rd.oc, rd.precio AS precio_seleccionado, 
                           h.precio AS precio_actual, h.precio_anterior
                    FROM remision_detalles rd
-                   LEFT JOIN hormas h ON h.id = (SELECT horma_id FROM remision_puntos_cantidades 
+                   LEFT JOIN hormas h ON h.id = (SELECT horma_id FROM ordenes_compra 
                                                  WHERE remision_id = $remision_id 
                                                  AND folio = rd.folio LIMIT 1)
                    WHERE rd.remision_id = $remision_id;";
