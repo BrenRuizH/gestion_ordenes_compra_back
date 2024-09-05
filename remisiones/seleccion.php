@@ -72,6 +72,7 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
                     "folio" => $folio,
                     "oc" => $oc,
                     "precio" => $precio,
+                    "precio_actual" => $precio_actual,
                     "precio_anterior" => $precio_anterior,
                     "precio_seleccionado" => $precio_seleccionado
                 );
