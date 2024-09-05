@@ -43,9 +43,13 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
                  INNER JOIN hormas h ON rpc.horma_id = h.id
                  WHERE remision_id = $remision_id;";
     } else {
-        $query2="SELECT id, folio, oc, precio
-                 FROM remision_detalles
-                 WHERE remision_id = $remision_id;";
+        $query2="SELECT rd.id, rd.folio, rd.oc, rd.precio AS precio_seleccionado, 
+                          h.precio AS precio_actual, h.precio_anterior
+                   FROM remision_detalles rd
+                   LEFT JOIN hormas h ON h.id = (SELECT horma_id FROM remision_puntos_cantidades 
+                                                 WHERE remision_id = $remision_id 
+                                                 AND folio = rd.folio LIMIT 1)
+                   WHERE rd.remision_id = $remision_id;";
     }
 
     $resultado2 = $mysql->query($query2);
@@ -67,7 +71,9 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
                     "id" => $id,
                     "folio" => $folio,
                     "oc" => $oc,
-                    "precio" => $precio
+                    "precio_actual" => $precio_actual,
+                    "precio_anterior" => $precio_anterior,
+                    "precio_seleccionado" => $precio_seleccionado
                 );
             array_push($itemRecords["items2"], $itemDetails2);
         }
