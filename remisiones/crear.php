@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $precio_unitario = $item['precio_unitario'];
 
             $stmt = $mysql->prepare("INSERT INTO remision_detalles (remision_id, folio, oc, precio) VALUES (?, ?, ?, ?)");
-            $stmt->bind_param("isid", $remision_id, $folio, $oc, $precio_unitario);
+            $stmt->bind_param("issd", $remision_id, $folio, $oc, $precio_unitario);
             if (!$stmt->execute()) {
                 throw new Exception("Error al insertar detalle de remisión: " . $stmt->error);
             }
