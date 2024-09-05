@@ -8,7 +8,7 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
     $remision_id = $_GET['remision_id'];
 
     $query="
-    SELECT oc.folio, oc.orden_compra_c, oc.total_pares, h.precio * oc.total_pares AS precio
+    SELECT oc.folio, oc.orden_compra_c, oc.total_pares, h.precio AS precio_actual, h.precio_anterior, h.precio * oc.total_pares AS precio
         FROM ordenes_compra oc
         INNER JOIN hormas h ON oc.horma_id = h.id
         WHERE oc.cliente_id = $cliente_id
@@ -38,7 +38,9 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
                 "folio" => $folio,
                 "oc" => $orden_compra_c,
                 "total_pares" => $total_pares,
-                "precio" => $precio
+                "precio" => $precio,
+                "precio_actual" => $precio_actual,
+                "precio_anterior" => $precio_anterior
             );
             array_push($itemRecords["items"], $itemDetails);
         }
