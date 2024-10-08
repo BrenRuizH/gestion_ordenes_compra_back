@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $mysql->begin_transaction();
 
         $stmt = $mysql->prepare("CALL EditarOrdenCompraYDetalle(?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("ississii", $id, $fecha_orden, $fecha_entrega, $cliente_id, $folio, $orden_compra_c, $horma_id, $total_pares);
+        $stmt->bind_param("issiisii", $id, $fecha_orden, $fecha_entrega, $cliente_id, $folio, $orden_compra_c, $horma_id, $total_pares);
         if (!$stmt->execute()) {
             throw new Exception("Error al modificar orden de compra: " . $stmt->error);
         }
