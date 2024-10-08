@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $mysql->begin_transaction();
 
         $stmt = $mysql->prepare("CALL CrearOrdenCompra(?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("ssissiis", $fecha_orden, $fecha_entrega, $cliente_id, $folio, $orden_compra_c, $horma_id, $total_pares, $status);
+        $stmt->bind_param("ssiisiis", $fecha_orden, $fecha_entrega, $cliente_id, $folio, $orden_compra_c, $horma_id, $total_pares, $status);
         if (!$stmt->execute()) {
             throw new Exception("Error al insertar orden de compra: " . $stmt->error);
         }
