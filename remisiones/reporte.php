@@ -9,9 +9,10 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
     $fecha_fin = $_GET['fecha_fin'];
     $cliente_id = isset($_GET['cliente_id']) ? $_GET['cliente_id'] : null;
 
-    $query="SELECT r.id, c.codigo, r.total_pares, r.precio_final
+    $query="SELECT r.id, c.codigo, r.total_pares, r.precio_final, r.fecha
 	    FROM remisiones r
 	    INNER JOIN clientes c ON r.cliente_id = c.id
+        LEFT JOIN ordenes_compra oc ON r.id = oc.remision_id
       WHERE fecha BETWEEN '$fecha_inicio' AND '$fecha_fin'";
 
     if ($cliente_id !== null) {
@@ -33,6 +34,8 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
                 "codigo" => $codigo,
                 "total_pares" => $total_pares,
                 "precio_final" => $precio_final,
+                "orden_compra_c" => $orden_compra_c,
+                "fecha" => $fecha
             );
             array_push($itemRecords["items"], $itemDetails);
  }
