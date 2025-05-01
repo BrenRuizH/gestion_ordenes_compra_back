@@ -5,7 +5,7 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
     require_once '../conexion.php';
     include '../config.php';
 
-    $query="SELECT r.id, c.codigo, r.total_pares, r.precio_final, oc.orden_compra_c, r.fecha_creacion AS Fecha
+    $query="SELECT r.id, c.codigo, r.total_pares, r.precio_final, oc.orden_compra_c, r.fecha
     FROM remisiones r
     INNER JOIN clientes c ON r.cliente_id = c.id
     LEFT JOIN ordenes_compra oc ON r.id = oc.remision_id
@@ -23,10 +23,10 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
             $itemDetails=array(
                 "id" => $id,
                 "codigo" => $codigo,
-                  "total_pares" => $total_pares,
+                "total_pares" => $total_pares,
                 "precio_final" => $precio_final,
                 "orden_compra_c" => $orden_compra_c,
-                "Fecha" => $Fecha
+                "fecha" => $fecha
             );
             array_push($itemRecords["items"], $itemDetails);
  }
