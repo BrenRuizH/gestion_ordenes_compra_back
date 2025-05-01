@@ -9,7 +9,7 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
     $fecha_fin = $_GET['fecha_fin'];
     $cliente_id = isset($_GET['cliente_id']) ? $_GET['cliente_id'] : null;
 
-    $query="SELECT r.id, c.codigo, r.total_pares, r.precio_final, r.fecha
+    $query="SELECT r.id, c.codigo, r.total_pares, r.precio_final, oc.orden_compra_c, r.fecha
 	    FROM remisiones r
 	    INNER JOIN clientes c ON r.cliente_id = c.id
         LEFT JOIN ordenes_compra oc ON r.id = oc.remision_id
