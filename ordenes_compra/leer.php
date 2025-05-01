@@ -5,10 +5,10 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
     require_once '../conexion.php';
     include '../config.php';
 
-    $query="SELECT oc.id, oc.folio, c.codigo, oc.orden_compra_c, oc.fecha_orden, oc.fecha_entrega, oc.total_pares, h.precio*oc.total_pares AS precio, oc.facturaNo, oc.status, oc.remision_id
+    $query="SELECT oc.id, oc.folio, c.codigo, oc.orden_compra_c, oc.fecha_orden, oc.fecha_entrega, oc.total_pares, h.precio*oc.total_pares AS precio, oc.facturaNo, oc.status, oc.remision_id, h.nombre
 	    FROM ordenes_compra oc 
 	    INNER JOIN clientes c ON oc.cliente_id = c.id
-            INNER JOIN hormas h ON oc.horma_id = h.id
+        INNER JOIN hormas h ON oc.horma_id = h.id
 	    ORDER BY CAST(oc.folio AS UNSIGNED) DESC, oc.fecha_orden DESC;";
 
     $resultado=$mysql->query($query);
@@ -31,7 +31,8 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
                 "precio" => $precio,
                 "facturaNo" => $facturaNo,
                 "status" => $status,
-                "remision_id" => $remision_id
+                "remision_id" => $remision_id,
+                "horma" => $horma
             );
             array_push($itemRecords["items"], $itemDetails);
  }

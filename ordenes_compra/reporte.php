@@ -9,9 +9,10 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $cliente_id = isset($_GET['cliente_id']) ? $_GET['cliente_id'] : null;
     
     // Construir la consulta
-    $query = "SELECT oc.id as orden_id, oc.folio, c.codigo, oc.orden_compra_c, oc.fecha_orden, oc.fecha_entrega, oc.total_pares, oc.facturaNo, oc.remision_id, oc.status
+    $query = "SELECT oc.id as orden_id, oc.folio, c.codigo, oc.orden_compra_c, oc.fecha_orden, oc.fecha_entrega, oc.total_pares, oc.facturaNo, oc.remision_id, oc.status, h.horma
               FROM ordenes_compra oc 
               INNER JOIN clientes c ON oc.cliente_id = c.id
+              INNER JOIN hormas h ON oc.horma_id = h.id
               WHERE oc.fecha_orden BETWEEN '$fecha_inicio' AND '$fecha_fin'";
 
     // Agregar la condición de cliente_id si se proporciona
@@ -37,7 +38,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                 "total_pares" => $item["total_pares"],
                 "facturaNo" => $item["facturaNo"],
                 "status" => $item["status"],
-                "remision_id" => $item["remision_id"]
+                "remision_id" => $item["remision_id"],
+                "horma" => $item["horma"]
             );
             array_push($itemRecords["items"], $itemDetails);
         }
