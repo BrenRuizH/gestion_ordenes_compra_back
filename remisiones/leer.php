@@ -23,8 +23,9 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
             $itemDetails=array(
                 "id" => $id,
                 "codigo" => $codigo,
-                "total_pares" => $total_pares,
+                  "total_pares" => $total_pares,
                 "precio_final" => $precio_final,
+                "orden_compra_c" => $orden_compra_c,
                 "Fecha" => $Fecha
             );
             array_push($itemRecords["items"], $itemDetails);
