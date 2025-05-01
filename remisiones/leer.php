@@ -5,10 +5,11 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
     require_once '../conexion.php';
     include '../config.php';
 
-    $query="SELECT r.id, c.codigo, r.total_pares, r.precio_final
-	    FROM remisiones r
-	    INNER JOIN clientes c ON r.cliente_id = c.id
-	    ORDER BY r.id DESC;";
+    $query="SELECT r.id, c.codigo, r.total_pares, r.precio_final, oc.orden_compra_c, r.fecha_creacion AS Fecha
+    FROM remisiones r
+    INNER JOIN clientes c ON r.cliente_id = c.id
+    LEFT JOIN ordenes_compra oc ON r.id = oc.remision_id
+    ORDER BY r.id DESC;";
 
     $resultado=$mysql->query($query);
     if($resultado->num_rows > 0)
@@ -24,6 +25,7 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
                 "codigo" => $codigo,
                 "total_pares" => $total_pares,
                 "precio_final" => $precio_final,
+                "Fecha" => $Fecha
             );
             array_push($itemRecords["items"], $itemDetails);
  }
