@@ -9,7 +9,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $cliente_id = isset($_GET['cliente_id']) ? $_GET['cliente_id'] : null;
     
     // Construir la consulta
-    $query = "SELECT oc.id as orden_id, oc.folio, c.codigo, oc.orden_compra_c, oc.fecha_orden, oc.fecha_entrega, oc.total_pares, oc.facturaNo, oc.remision_id, oc.status, h.horma
+    $query = "SELECT oc.id as orden_id, oc.folio, c.codigo, oc.orden_compra_c, oc.fecha_orden, oc.fecha_entrega, oc.total_pares, oc.facturaNo, oc.remision_id, oc.status, h.nombre AS horma
               FROM ordenes_compra oc 
               INNER JOIN clientes c ON oc.cliente_id = c.id
               INNER JOIN hormas h ON oc.horma_id = h.id
