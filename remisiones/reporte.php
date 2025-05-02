@@ -9,16 +9,27 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
     $fecha_fin = $_GET['fecha_fin'];
     $cliente_id = isset($_GET['cliente_id']) ? $_GET['cliente_id'] : null;
 
-    $query="SELECT r.id, c.codigo, r.total_pares, r.precio_final, oc.orden_compra_c, r.fecha
-	    FROM remisiones r
-	    INNER JOIN clientes c ON r.cliente_id = c.id
-        (SELECT oc.orden_compra_c FROM ordenes_compra oc WHERE oc.remision_id = r.id LIMIT 1) AS orden_compra_c,
-      WHERE fecha BETWEEN '$fecha_inicio' AND '$fecha_fin'";
+    $query=$query = "
+    SELECT 
+        r.id, 
+        c.codigo, 
+        r.total_pares, 
+        r.precio_final, 
+        (SELECT oc.orden_compra_c 
+         FROM ordenes_compra oc 
+         WHERE oc.remision_id = r.id 
+         LIMIT 1) AS orden_compra_c,
+        r.fecha
+    FROM remisiones r
+    INNER JOIN clientes c ON r.cliente_id = c.id
+    WHERE r.fecha BETWEEN '$fecha_inicio' AND '$fecha_fin'";
+    
 
     if ($cliente_id !== null) {
         $query .= " AND r.cliente_id = '$cliente_id'";
-        }
+    }
     $query .= " ORDER BY r.id";
+    
 
     $resultado=$mysql->query($query);
     if($resultado->num_rows > 0)
