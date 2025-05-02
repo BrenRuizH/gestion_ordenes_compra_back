@@ -5,11 +5,12 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
     require_once '../conexion.php';
     include '../config.php';
 
-    $query="SELECT r.id, c.codigo, r.total_pares, r.precio_final, oc.orden_compra_c, r.fecha
-    FROM remisiones r
-    INNER JOIN clientes c ON r.cliente_id = c.id
-    LEFT JOIN ordenes_compra oc ON r.id = oc.remision_id
-    ORDER BY r.id DESC;";
+    $query="SELECT r.id, c.codigo, r.total_pares, r.precio_final, 
+       (SELECT oc.orden_compra_c FROM ordenes_compra oc WHERE oc.remision_id = r.id LIMIT 1) AS orden_compra_c,
+       r.fecha
+       FROM remisiones r
+       INNER JOIN clientes c ON r.cliente_id = c.id
+        ORDER BY r.id DESC;";
 
     $resultado=$mysql->query($query);
     if($resultado->num_rows > 0)
