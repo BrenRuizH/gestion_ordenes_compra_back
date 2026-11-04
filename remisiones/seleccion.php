@@ -38,10 +38,11 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
     }
 
     if ($cliente_id == 36) {
-        $query2="SELECT rpc.id, rpc.oc, rpc.horma_id, h.nombre AS horma, rpc.punto, rpc.cantidad, h.precio
-                 FROM remision_puntos_cantidades rpc
-                 INNER JOIN hormas h ON rpc.horma_id = h.id
-                 WHERE remision_id = $remision_id;";
+   $query2="SELECT rpc.id, rpc.oc, rpc.horma_id, h.nombre AS horma,
+                rpc.punto, rpc.cantidad, rpc.precio
+         FROM remision_puntos_cantidades rpc
+         INNER JOIN hormas h ON rpc.horma_id = h.id
+         WHERE rpc.remision_id = $remision_id;";
     } else {
         $query2="SELECT rd.id, rd.folio, rd.oc, rd.precio AS precio, 
                           h.precio AS precio_actual, h.precio_anterior
@@ -74,7 +75,7 @@ if($_SERVER["REQUEST_METHOD"]=="GET")
                     "precio" => $precio,
                     "precio_actual" => $precio_actual,
                     "precio_anterior" => $precio_anterior,
-                    "precio_seleccionado" => $precio_seleccionado
+                    "precio_seleccionado" => $precio
                 );
             array_push($itemRecords["items2"], $itemDetails2);
         }

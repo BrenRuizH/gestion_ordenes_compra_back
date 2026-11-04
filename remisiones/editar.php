@@ -9,11 +9,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $cliente_id = $_POST['cliente_id'];
     $total_pares = $_POST['total_pares'];
     $precio_final = $_POST['precio_final'];
-    $extra = $_POST['extra'];
-    $descripcion = $_POST['descripcion'];
-    $folios = json_decode($_POST['folios'], true);
+    $extra = isset($_POST['extra']) && $_POST['extra'] !== ''
+    ? (float) $_POST['extra']
+    : 0;
+$descripcion = $_POST['descripcion'] ?? '';
+   $folios = isset($_POST['folios'])
+    ? json_decode($_POST['folios'], true)
+    : [];
 
-    $elementosAgregados = isset($_POST['elementosAgregados']) ? json_decode($_POST['elementosAgregados'], true) : [];
+$elementosAgregados = isset($_POST['elementosAgregados'])
+    ? json_decode($_POST['elementosAgregados'], true)
+    : [];
+
+if (!is_array($folios)) {
+    $folios = [];
+}
+
+if (!is_array($elementosAgregados)) {
+    $elementosAgregados = [];
+}
 
     try {
         $mysql->begin_transaction();
@@ -36,7 +50,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         foreach ($folios as $item) {
             $folio = $item['folio'];
             $oc = $item['oc'];
-            $precio_unitario = $item['precio_unitario'] ?? 0;
+if (!isset($item['precio_unitario'])) {
+    throw new Exception("Falta el precio unitario del folio: " . $item['folio']);
+}
+
+$precio_unitario = (float) $item['precio_unitario'];
             
             $stmt = $mysql->prepare("INSERT INTO remision_detalles (remision_id, folio, oc, precio) VALUES (?, ?, ?, ?)");
             $stmt->bind_param("issd", $id, $folio, $oc, $precio_unitario);
@@ -61,21 +79,47 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
 
             // Inserta los nuevos detalles
-            foreach ($elementosAgregados as $elemento) {
-                $horma_id = $elemento['horma_id'];
-                $oc = $elemento['oc'];
-                foreach ($elemento['puntos'] as $puntoCantidad) {
-                    $punto = $puntoCantidad['punto'];
-                    $cantidad = $puntoCantidad['cantidad'];
-                    $stmt = $mysql->prepare("INSERT INTO remision_puntos_cantidades (remision_id, horma_id, punto, cantidad, oc) VALUES (?, ?, ?, ?, ?)");
-                    $stmt->bind_param("iidis", $id, $horma_id, $punto, $cantidad, $oc);
-                    if (!$stmt->execute()) {
-                        throw new Exception("Error al insertar detalle de horma: " . $stmt->error);
-                    }
-                }
-            }
+       
+// Inserta los nuevos detalles
+foreach ($elementosAgregados as $elemento) {
+    $horma_id = $elemento['horma_id'];
+    $oc = $elemento['oc'];
+
+    // Recuperar el precio unitario histórico de Angular.
+if (!isset($elemento['precio_unitario'])) {
+    throw new Exception("Falta el precio unitario de la horma: " . $elemento['horma_id']);
+}
+
+$precio_unitario = (float) $elemento['precio_unitario'];
+
+    foreach ($elemento['puntos'] as $puntoCantidad) {
+        $punto = $puntoCantidad['punto'];
+        $cantidad = $puntoCantidad['cantidad'];
+
+        $stmt = $mysql->prepare("
+            INSERT INTO remision_puntos_cantidades
+            (remision_id, horma_id, punto, cantidad, oc, precio)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ");
+
+        $stmt->bind_param(
+            "iidisd",
+            $id,
+            $horma_id,
+            $punto,
+            $cantidad,
+            $oc,
+            $precio_unitario
+        );
+
+        if (!$stmt->execute()) {
+            throw new Exception(
+                "Error al insertar detalle de horma: " . $stmt->error
+            );
         }
-        
+    }
+}
+}
         $mysql->commit();
 
         echo json_encode(["status" => "success", "message" => "Remisión editada exitosamente"]);
